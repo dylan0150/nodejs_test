@@ -8,6 +8,7 @@ var   config        = require('./config'),
       url           = require('url'),
       dbconfig      = require('./dbconfig'),
       HTTPrequest   = require('./request'),
+      nodeMaria     = require('node-mariadb'),
 
 //NETWORK CONFIG
       port           = config.host.port;
