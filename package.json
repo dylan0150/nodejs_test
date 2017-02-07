@@ -1,0 +1,11 @@
+{
+  "name": "test_server_dylan0150",
+  "version": "1.0.0",
+  "description": "Test Server",
+  "main": "index.js",
+  "scripts": {
+    "test": "test.js"
+  },
+  "author": "dylan0150",
+  "license": "ISC"
+}
