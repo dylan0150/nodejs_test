@@ -1,13 +1,22 @@
 //VARIABLES
-var DEBUGGING = false;
+var   DEBUGGING = false;
 
-var   config      = require('./config'),
-      fs          = require('fs'),
-      http        = require('http'),
-      url         = require('url'),
-      HTTPrequest = require('./request'),
+//REQUIRES
+var   config        = require('./config'),
+      fs            = require('fs'),
+      http          = require('http'),
+      url           = require('url'),
+      dbconfig      = require('./dbconfig'),
+      HTTPrequest   = require('./request'),
 
-      port    = config.host.port;
+//NETWORK CONFIG
+      port           = config.host.port;
+
+//SETUP
+var setUp = function() {
+
+
+}
 
 var handleRequest = function(request, response) {
 
@@ -24,12 +33,8 @@ var handleRequest = function(request, response) {
 
   try {
     console.log(request.method+' Request, URL:'+request.url)
-    if (request.method == 'GET') {
-      response = HTTPrequest.get(request,response)
-    } else if (request.method == 'POST') {
-      response = HTTPrequest.post(request,response)
-    }
-    console.log(request.method+' Response: '+response.statusCode+': '+response.statusMessage)
+    response = HTTPrequest[request.method](request,response)
+    console.log(request.method+' Response, Status: '+response.statusCode+' '+response.statusMessage)
   } catch (err) {
     console.log(err)
   }
@@ -38,6 +43,8 @@ var handleRequest = function(request, response) {
 var server = http.createServer(handleRequest).listen(port, function(){
   console.log("Server listening on port:"+port
 )})
+
+setUp();
 
 /*
   request.strings = {

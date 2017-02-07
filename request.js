@@ -1,4 +1,4 @@
-exports.get = function(request, response) {
+exports.GET = function(request, response) {
   try {
     var urlParams = request.url.split('?')[1].split('&')
     for (var i = 0; i < urlParams.length; i++) {
@@ -22,7 +22,7 @@ exports.get = function(request, response) {
   return response
 }
 
-exports.post = function(request, response) {
+exports.POST = function(request, response) {
   try {
     var urlParams = request.url.split('?')[1].split('&')
     for (var i = 0; i < urlParams.length; i++) {
