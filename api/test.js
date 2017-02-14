@@ -1,8 +1,22 @@
-exports.get = function(headers,params){
+exports.get = function(headers,urlParams) {
+  var data = {}
 
-  var json = JSON.stringify({
-    params  : params
-  });
+  for (var key in urlParams) {
+    data[key] = urlParams[key]
+  }
 
-  return json
+  return data
+}
+
+exports.post = function(headers,urlParams,bodyParams) {
+  var data = {}
+
+  for (var key in bodyParams) {
+    data[key] = bodyParams[key]
+  }
+  for (var key in urlParams) {
+    data[key] = urlParams[key]
+  }
+
+  return data
 }

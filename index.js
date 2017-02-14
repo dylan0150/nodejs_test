@@ -14,10 +14,6 @@ var   config        = require('./config'),
       port           = config.host.port;
 
 //SETUP
-var setUp = function() {
-
-
-}
 
 var handleRequest = function(request, response) {
 
@@ -33,6 +29,9 @@ var handleRequest = function(request, response) {
   }
 
   try {
+    if (request.method != 'GET' && request.method != 'POST') {
+      request.method = request.headers['access-control-request-method']
+    }
     console.log(request.method+' Request, URL:'+request.url)
     response = HTTPrequest[request.method](request,response)
     console.log(request.method+' Response, Status: '+response.statusCode+' '+response.statusMessage)
@@ -42,10 +41,8 @@ var handleRequest = function(request, response) {
 }
 
 var server = http.createServer(handleRequest).listen(port, function(){
-  console.log("Server listening on port:"+port
-)})
-
-setUp();
+  console.log("Server listening on port:"+port)
+})
 
 /*
   request.strings = {

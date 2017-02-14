@@ -1,10 +1,15 @@
-var host = {};
-host.port = 8080;
-host.hostname = '';
-
-exports.host = host
+exports.host = {
+  port: 8080,
+  hostname: ''
+}
 
 exports.db = {
   port: 9998,
   host: 'localhost'
+}
+
+exports.accessCtrl = {
+  headers: "X-Requested-With,content-type",
+  origins: "null",
+  methods: "GET, POST, OPTIONS"
 }
