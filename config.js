@@ -13,3 +13,5 @@ exports.accessCtrl = {
   origins: "null",
   methods: "GET, POST, OPTIONS"
 }
+
+exports.path = "/home/local/EVOFFICE/dhanner/Documents/WORKSPACE/NODEJS/"

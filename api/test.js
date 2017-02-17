@@ -9,6 +9,8 @@ exports.get = function(headers,urlParams) {
 }
 
 exports.post = function(headers,urlParams,bodyParams) {
+  var db = require('./../dbconfig')
+  db.Create('test','test',[{name:"test"},{id:1}])
   var data = {}
 
   for (var key in bodyParams) {
