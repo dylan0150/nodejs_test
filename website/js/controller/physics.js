@@ -1,5 +1,6 @@
 var PhysicsEngine = function(refresh_rate,canvas_name,canvas_colour) {
 
+  //VARIABLES
   var time      = 0
   var objects   = []
   var forces    = []
@@ -14,6 +15,7 @@ var PhysicsEngine = function(refresh_rate,canvas_name,canvas_colour) {
      y  :0
   }
 
+  //ACCESSOR FUNCTIONS
   this.getTime = function() {
     return time
   }
@@ -45,6 +47,7 @@ var PhysicsEngine = function(refresh_rate,canvas_name,canvas_colour) {
     }
   }
 
+  //OBJECT CREATION FUNCTIONS
   this.createRectangle = function(x,y,width,height,material) {
     for (var i = 0; i < materials.length; i++) {
       if (material == materials[i].name) {
@@ -73,21 +76,12 @@ var PhysicsEngine = function(refresh_rate,canvas_name,canvas_colour) {
     var material = new Material(name,density,bounce,friction,colour)
     materials.push(material)
   }
-
   this.createForce = function(x_scalar,x_factors,y_scalar,y_factors,constant) {
     var force = new Force(x_scalar,x_factors,y_scalar,y_factors,constant)
     forces.push(force)
   }
 
-  var update = function() {
-    time++
-    cc.fillStyle = canvas_colour
-    cc.fillRect(0,0,c.width,c.height)
-    applyForces()
-    moveObjects()
-    drawObjects()
-  }
-
+  //CLASSES
   var Rectangle = function(x,y,width,height,material,is_static) {
     this.id = n++
     this.type = 'rectangle'
@@ -123,7 +117,6 @@ var PhysicsEngine = function(refresh_rate,canvas_name,canvas_colour) {
       this.dy = Math.floor(Math.random()*25)
     }
   }
-
   var Material = function(name,density,bounce,friction,colour) {
     this.name     = name;
     this.density  = density;
@@ -131,7 +124,6 @@ var PhysicsEngine = function(refresh_rate,canvas_name,canvas_colour) {
     this.friction = friction;
     this.colour   = colour
   }
-
   var Force = function(x_scalar,x_factors,y_scalar,y_factors,constant) {
     this.x = x_scalar;
     this.fx = x_factors;
@@ -140,6 +132,15 @@ var PhysicsEngine = function(refresh_rate,canvas_name,canvas_colour) {
     this.z = constant
   }
 
+  //PHYSX UPDATES
+  var update = function() {
+    time++
+    cc.fillStyle = canvas_colour
+    cc.fillRect(0,0,c.width,c.height)
+    applyForces()
+    moveObjects()
+    drawObjects()
+  }
   var applyForces = function() {
     for (var i = 0; i < objects.length; i++) {
       if (objects[i].static != true) {
@@ -177,7 +178,6 @@ var PhysicsEngine = function(refresh_rate,canvas_name,canvas_colour) {
       }
     }
   }
-
   var moveObjects = function() {
     for (var i = 0; i < objects.length; i++) {
       var obj = objects[i]
@@ -203,7 +203,6 @@ var PhysicsEngine = function(refresh_rate,canvas_name,canvas_colour) {
       }
     }
   }
-
   var drawObjects = function() {
     for (var i = 0; i < objects.length; i++) {
       var obj = objects[i]
@@ -220,6 +219,7 @@ var PhysicsEngine = function(refresh_rate,canvas_name,canvas_colour) {
     }
   }
 
+  //PHYSX EVENTS
   var collide_x_p = function(obj) {
     var collision = false;
     for (var i = 0; i < objects.length; i++) {
@@ -259,7 +259,6 @@ var PhysicsEngine = function(refresh_rate,canvas_name,canvas_colour) {
     }
     return collision
   }
-
   var collide_x_n = function(obj) {
     var collision = false;
     for (var i = 0; i < objects.length; i++) {
@@ -298,7 +297,6 @@ var PhysicsEngine = function(refresh_rate,canvas_name,canvas_colour) {
     }
     return collision
   }
-
   var collide_y_p = function(obj) {
     var collision = false;
     for (var i = 0; i < objects.length; i++) {
@@ -337,7 +335,6 @@ var PhysicsEngine = function(refresh_rate,canvas_name,canvas_colour) {
     }
     return collision
   }
-
   var collide_y_n = function(obj) {
     var collision = false;
     for (var i = 0; i < objects.length; i++) {
@@ -376,7 +373,6 @@ var PhysicsEngine = function(refresh_rate,canvas_name,canvas_colour) {
     }
     return collision
   }
-
   var dynamicBounce_x = function(obj1,obj2) {
     if (obj1.dx > 0 && obj2.dx > 0 || obj1.dx < 0 && obj2.dx < 0) {
       obj1.dx -= (obj2.dx*obj2.mass*obj2.material.bounce)/obj1.mass
