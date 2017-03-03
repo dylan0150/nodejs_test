@@ -106,8 +106,8 @@ var PhysicsEngine = function(refresh_rate,canvas_name,canvas_colour) {
     this.y = y
     this.dx = 0
     this.dy = 0
-    this.width = radius
-    this.height = radius
+    this.width = radius*2
+    this.height = radius*2
     this.radius = radius
     this.material = material
     this.mass = material.density * radius * radius * Math.PI
@@ -210,7 +210,7 @@ var PhysicsEngine = function(refresh_rate,canvas_name,canvas_colour) {
       cc.strokeStyle = obj.material.colour
       if (obj.type == 'circle') {
         cc.beginPath();
-        cc.arc(obj.x,obj.y,obj.radius,0,2*Math.PI);
+        cc.arc(obj.x+obj.radius,obj.y+obj.radius,obj.radius,0,2*Math.PI);
         cc.stroke();
         cc.fill();
       } else {
@@ -223,37 +223,19 @@ var PhysicsEngine = function(refresh_rate,canvas_name,canvas_colour) {
   var collide_x_p = function(obj) {
     var collision = false;
     for (var i = 0; i < objects.length; i++) {
-      if (obj.type == 'circle') {
-        var obj2 = objects[i]
-        if (  obj.x + obj.dx + obj.radius >= obj2.x
-          &&  obj.x + obj.radius <= obj2.x
-          &&  obj.y + obj.radius > obj2.y
-          &&  obj.y - obj.radius < obj2.y + obj2.height
-          &&  obj.id != obj2.id
-        ) {
-          var collision = true;
-          obj.x = obj2.x - obj.radius;
-          if (obj2.static == true) {
-            bounceStatic_x(obj,obj2)
-          } else {
-            dynamicBounce_x(obj,obj2)
-          }
-        }
-      } else {
-        var obj2 = objects[i]
-        if (  obj.x + obj.dx + obj.width >= obj2.x
-          &&  obj.x + obj.width <= obj2.x
-          &&  obj.y + obj.height > obj2.y
-          &&  obj.y < obj2.y + obj2.height
-          &&  obj.id != obj2.id
-        ) {
-          var collision = true;
-          obj.x = obj2.x - obj.width;
-          if (obj2.static == true) {
-            bounceStatic_x(obj,obj2)
-          } else {
-            dynamicBounce_x(obj,obj2)
-          }
+      var obj2 = objects[i]
+      if (  obj.x + obj.dx + obj.width >= obj2.x
+        &&  obj.x + obj.width <= obj2.x
+        &&  obj.y + obj.height > obj2.y
+        &&  obj.y < obj2.y + obj2.height
+        &&  obj.id != obj2.id
+      ) {
+        var collision = true;
+        obj.x = obj2.x - obj.width;
+        if (obj2.static == true) {
+          bounceStatic_x(obj,obj2)
+        } else {
+          dynamicBounce_x(obj,obj2)
         }
       }
     }
@@ -263,35 +245,18 @@ var PhysicsEngine = function(refresh_rate,canvas_name,canvas_colour) {
     var collision = false;
     for (var i = 0; i < objects.length; i++) {
       var obj2 = objects[i]
-      if (obj.type == 'circle') {
-        if (  obj.x + obj.dx - obj.radius <= obj2.x + obj2.width
-          &&  obj.x + obj.radius >= obj2.x + obj2.width
-          &&  obj.y + obj.radius > obj2.y
-          &&  obj.y - obj.radius < obj2.y + obj2.height
-          &&  obj.id != obj2.id
-        ) {
-          var collision = true;
-          obj.x = obj2.x + obj2.width + obj.radius;
-          if (obj2.static == true) {
-            bounceStatic_x(obj,obj2)
-          } else {
-            dynamicBounce_x(obj,obj2)
-          }
-        }
-      } else {
-        if (  obj.x + obj.dx <= obj2.x + obj2.width
-          &&  obj.x >= obj2.x + obj2.width
-          &&  obj.y + obj.height > obj2.y
-          &&  obj.y < obj2.y + obj2.height
-          &&  obj.id != obj2.id
-        ) {
-          var collision = true;
-          obj.x = obj2.x + obj2.radius;
-          if (obj2.static == true) {
-            bounceStatic_x(obj,obj2)
-          } else {
-            dynamicBounce_x(obj,obj2)
-          }
+      if (  obj.x + obj.dx <= obj2.x + obj2.width
+        &&  obj.x >= obj2.x + obj2.width
+        &&  obj.y + obj.height > obj2.y
+        &&  obj.y < obj2.y + obj2.height
+        &&  obj.id != obj2.id
+      ) {
+        var collision = true;
+        obj.x = obj2.x + obj2.width;
+        if (obj2.static == true) {
+          bounceStatic_x(obj,obj2)
+        } else {
+          dynamicBounce_x(obj,obj2)
         }
       }
     }
@@ -301,35 +266,18 @@ var PhysicsEngine = function(refresh_rate,canvas_name,canvas_colour) {
     var collision = false;
     for (var i = 0; i < objects.length; i++) {
       var obj2 = objects[i]
-      if (obj.type == 'circle') {
-        if (  obj.y + obj.dy + obj.radius >= obj2.y
-          &&  obj.y + obj.radius <= obj2.y
-          &&  obj.x + obj.radius > obj2.x
-          &&  obj.x - obj.radius < obj2.x + obj2.width
-          &&  obj.id != obj2.id
-        ) {
-          var collision = true;
-          obj.y = obj2.y - obj.radius;
-          if (obj2.static == true) {
-            bounceStatic_y(obj,obj2)
-          } else {
-            dynamicBounce_y(obj,obj2)
-          }
-        }
-      } else {
-        if (  obj.y + obj.dy + obj.height >= obj2.y
-          &&  obj.y + obj.height <= obj2.y
-          &&  obj.x + obj.width > obj2.x
-          &&  obj.x < obj2.x + obj2.width
-          &&  obj.id != obj2.id
-        ) {
-          var collision = true;
-          obj.y = obj2.y - obj.radius;
-          if (obj2.static == true) {
-            bounceStatic_y(obj,obj2)
-          } else {
-            dynamicBounce_y(obj,obj2)
-          }
+      if (  obj.y + obj.dy + obj.height >= obj2.y
+        &&  obj.y + obj.height <= obj2.y
+        &&  obj.x + obj.width > obj2.x
+        &&  obj.x < obj2.x + obj2.width
+        &&  obj.id != obj2.id
+      ) {
+        var collision = true;
+        obj.y = obj2.y - obj.height;
+        if (obj2.static == true) {
+          bounceStatic_y(obj,obj2)
+        } else {
+          dynamicBounce_y(obj,obj2)
         }
       }
     }
@@ -339,35 +287,18 @@ var PhysicsEngine = function(refresh_rate,canvas_name,canvas_colour) {
     var collision = false;
     for (var i = 0; i < objects.length; i++) {
       var obj2 = objects[i]
-      if (obj.type == 'circle') {
-        if (  obj.y + obj.dy - obj.radius <= obj2.y + obj2.height
-          &&  obj.y + obj.radius >= obj2.y + obj2.height
-          &&  obj.x + obj.radius > obj2.x
-          &&  obj.x - obj.radius < obj2.x + obj2.width
-          &&  obj.id != obj2.id
-        ) {
-          var collision = true;
-          obj.y = obj2.y + obj2.height + obj.radius;
-          if (obj2.static == true) {
-            bounceStatic_y(obj,obj2)
-          } else {
-            dynamicBounce_y(obj,obj2)
-          }
-        }
-      } else {
-        if (  obj.y + obj.dy <= obj2.y + obj2.height
-          &&  obj.y >= obj2.y + obj2.height
-          &&  obj.x + obj.width > obj2.x
-          &&  obj.x < obj2.x + obj2.width
-          &&  obj.id != obj2.id
-        ) {
-          var collision = true;
-          obj.y = obj2.y + obj2.height;
-          if (obj2.static == true) {
-            bounceStatic_y(obj,obj2)
-          } else {
-            dynamicBounce_y(obj,obj2)
-          }
+      if (  obj.y + obj.dy <= obj2.y + obj2.height
+        &&  obj.y >= obj2.y + obj2.height
+        &&  obj.x + obj.width > obj2.x
+        &&  obj.x < obj2.x + obj2.width
+        &&  obj.id != obj2.id
+      ) {
+        var collision = true;
+        obj.y = obj2.y + obj2.height;
+        if (obj2.static == true) {
+          bounceStatic_y(obj,obj2)
+        } else {
+          dynamicBounce_y(obj,obj2)
         }
       }
     }
