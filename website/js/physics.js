@@ -1,6 +1,9 @@
 var PhysicsEngine = function(refresh_rate,canvas_name,canvas_colour) {
 
   //VARIABLES
+  var fps               = 0
+  var last_time         = Date.now()
+  var timer             = 0
   var time              = 0
   var frame             = 0
   var number_of_objects = 0
@@ -24,6 +27,12 @@ var PhysicsEngine = function(refresh_rate,canvas_name,canvas_colour) {
   }
   this.getFrame = function() {
     return frame
+  }
+  this.getFPS = function() {
+    return fps
+  }
+  this.getAverageFPS = function() {
+    return frame/timer*60
   }
   this.getWindow = function() {
     return cc
@@ -58,14 +67,6 @@ var PhysicsEngine = function(refresh_rate,canvas_name,canvas_colour) {
   }
 
   //OBJECT CREATION FUNCTIONS
-  this.createPlayer = function(x,y,radius,material) {
-    for (var i = 0; i < materials.length; i++) {
-      if (material == materials[i].name) {
-        var obj = new Circle(x,y,radius,materials[i],false,true)
-        objects.push(obj)
-      }
-    }
-  }
   this.createPlayer = function(x,y,radius,material) {
     for (var i = 0; i < materials.length; i++) {
       if (material == materials[i].name) {
@@ -129,10 +130,6 @@ var PhysicsEngine = function(refresh_rate,canvas_name,canvas_colour) {
     this.material = material
     this.mass = material.density * width * height
     this.static = is_static
-    if (!is_static) {
-      this.dx = Math.floor(Math.random()*25)
-      this.dy = Math.floor(Math.random()*25)
-    }
   }
   var Circle = function(x,y,radius,material,is_static,player) {
     this.player = player
@@ -148,10 +145,6 @@ var PhysicsEngine = function(refresh_rate,canvas_name,canvas_colour) {
     this.material = material
     this.mass = material.density * radius * radius * Math.PI
     this.static = is_static
-    if (!is_static) {
-      this.dx = Math.floor(Math.random()*25)
-      this.dy = Math.floor(Math.random()*25)
-    }
   }
   var Material = function(name,density,bounce,friction,colour) {
     this.name     = name;
@@ -165,7 +158,7 @@ var PhysicsEngine = function(refresh_rate,canvas_name,canvas_colour) {
     this.fx = x_factors;
     this.y = y_scalar;
     this.fy = y_factors;
-    this.z = constant
+    this.c = constant
   }
 
   //PHYSX UPDATES
@@ -180,6 +173,9 @@ var PhysicsEngine = function(refresh_rate,canvas_name,canvas_colour) {
     cc.fillRect(0,0,c.width,c.height)
     drawObjects()
     if (!paused) {
+      var delta = (Date.now() - last_time)/1000;
+      last_time = Date.now()
+      fps = 1/delta
       window.requestAnimationFrame(draw)
     }
   }
@@ -203,9 +199,9 @@ var PhysicsEngine = function(refresh_rate,canvas_name,canvas_colour) {
           if (apply) {
             var ddx = f.x
             var ddy = f.y
-            if (typeof constants[f.z] != undefined && f.z != undefined) {
-              ddx *= constants[f.z]
-              ddy *= constants[f.z]
+            if (typeof constants[f.c] != undefined && f.c != undefined) {
+              ddx *= constants[f.c]
+              ddy *= constants[f.c]
             }
             for (var k = 0; k < f.fx.length; k++) {
               ddx *= obj[f.fx[k]]
@@ -379,6 +375,9 @@ var PhysicsEngine = function(refresh_rate,canvas_name,canvas_colour) {
     obj.dx = obj.dx*obj.material.friction*s_obj.material.friction
   }
 
+  var counter = setInterval(function(){
+    timer++
+  },1000/60)
   var engine = setInterval(update,1000/refresh_rate)
   window.requestAnimationFrame(draw)
 }

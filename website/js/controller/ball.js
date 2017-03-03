@@ -1,7 +1,7 @@
-app.controller('ballCtrl', function($scope) {
+app.controller('ballCtrl', function($scope,$state,$interval) {
 
   $scope.physx = new PhysicsEngine(75,'canvas','black')
-  
+
   $scope.physx.createForce(9.8,['mass'],0,[],'x') //x gravity
   $scope.physx.createForce(0,[],9.8,['mass'],'y') //y gravity
   $scope.physx.createForce(-0.1,['height','dx'],-0.1,['width','dy']) //air resistance
@@ -25,6 +25,8 @@ app.controller('ballCtrl', function($scope) {
     console.log($scope.physx.getMaterials())
     console.log("Physics Updates: " + $scope.physx.getTime())
     console.log("Frame Draws: "     + $scope.physx.getFrame())
+    console.log("Current FPS: "     + $scope.physx.getFPS())
+    console.log("Average FPS: "     + $scope.physx.getAverageFPS())
   }
   $scope.x_plus = function() {
     ct = $scope.physx.getConstants()

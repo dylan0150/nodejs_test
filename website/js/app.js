@@ -14,15 +14,15 @@ var app = angular.module('nodeApp', [
         }
       })
 
-      .state('profile', {
-        url: '/profile',
-        templateUrl: 'templates/profile.html',
-        controller: 'profileCtrl',
+      .state('main', {
+        url: '/main',
+        templateUrl: 'templates/main.html',
+        controller: 'mainCtrl',
         resolve: {
 
         }
       })
 
     $urlRouterProvider
-      .otherwise('/ball')
+      .otherwise('/main')
   })
