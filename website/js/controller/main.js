@@ -9,8 +9,8 @@ window.onload = function() {
   physx.createMaterial('rubber',1,0.75,0.75,'orange')
   physx.createMaterial('steel',25,0.5,0.5,'grey')
 
-  physx.createStaticRectangle(0,780,800,25,'steel')
-  physx.createStaticRectangle(0,-5,800,25,'steel')
+  physx.createStaticRectangle(-5,780,810,25,'steel')
+  physx.createStaticRectangle(-5,-5,810,25,'steel')
   physx.createStaticRectangle(-5,0,25,800,'steel')
   physx.createStaticRectangle(780,0,25,800,'steel') //bounds
 
@@ -25,8 +25,8 @@ var test = function() {
   console.log(physx.getObjects())
   console.log(physx.getForces())
   console.log(physx.getMaterials())
-  console.log("Physics Updates: "+physx.getTime())
-  console.log("Frame Draws: "+physx.getFrame())
+  console.log("Physics Updates: " + physx.getTime())
+  console.log("Frame Draws: "     + physx.getFrame())
 }
 
 var x_plus = function() {

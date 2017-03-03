@@ -1,22 +1,17 @@
 var PhysicsEngine = function(refresh_rate,canvas_name,canvas_colour) {
 
   //VARIABLES
-  var time      = 0
-  var frame     = 0
-  var objects   = []
-  var forces    = []
-  var materials = []
-  var n         = 0
-  var c         = document.getElementById('canvas')
-  var cc        = c.getContext('2d')
-  var paused    = false
-
-  var canvas_window = {
-    x: 0,
-    y: 0,
-    width: c.width,
-    height: c.height
-  }
+  var time              = 0
+  var frame             = 0
+  var number_of_objects = 0
+  var objects           = []
+  var forces            = []
+  var materials         = []
+  var c                 = document.getElementById(canvas_name)
+  var cc                = c.getContext('2d')
+    cc.x                = 0;
+    cc.y                = 0;
+  var paused            = false
 
   var constants = {
      x  :0,
@@ -31,7 +26,7 @@ var PhysicsEngine = function(refresh_rate,canvas_name,canvas_colour) {
     return frame
   }
   this.getWindow = function() {
-    return canvas_window
+    return cc
   }
   this.getObjects = function() {
     return objects
@@ -123,7 +118,7 @@ var PhysicsEngine = function(refresh_rate,canvas_name,canvas_colour) {
   //CLASSES
   var Rectangle = function(x,y,width,height,material,is_static,player) {
     this.player = player
-    this.id = n++
+    this.id = number_of_objects++
     this.type = 'rectangle'
     this.x = x
     this.y = y
@@ -141,7 +136,7 @@ var PhysicsEngine = function(refresh_rate,canvas_name,canvas_colour) {
   }
   var Circle = function(x,y,radius,material,is_static,player) {
     this.player = player
-    this.id = n++
+    this.id = number_of_objects++
     this.type = 'circle'
     this.x = x
     this.y = y
@@ -249,8 +244,8 @@ var PhysicsEngine = function(refresh_rate,canvas_name,canvas_colour) {
         obj.dx = 0
       }
       if (obj.player) {
-        canvas_window.x = obj.x - canvas_window.width/2
-        canvas_window.y = obj.y - canvas_window.height/2
+        cc.x = obj.x - c.width/2
+        cc.y = obj.y - c.height/2
       }
     }
   }
@@ -261,11 +256,11 @@ var PhysicsEngine = function(refresh_rate,canvas_name,canvas_colour) {
       cc.strokeStyle = obj.material.colour
       if (obj.type == 'circle') {
         cc.beginPath();
-        cc.arc(obj.x+obj.radius-canvas_window.x,obj.y+obj.radius-canvas_window.y,obj.radius,0,2*Math.PI);
+        cc.arc(obj.x+obj.radius-cc.x,obj.y+obj.radius-cc.y,obj.radius,0,2*Math.PI);
         cc.stroke();
         cc.fill();
       } else {
-        cc.fillRect(obj.x-canvas_window.x,obj.y-canvas_window.y,obj.width,obj.height)
+        cc.fillRect(obj.x-cc.x,obj.y-cc.y,obj.width,obj.height)
       }
     }
   }
