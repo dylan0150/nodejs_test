@@ -71,6 +71,14 @@ var PhysicsEngine = function(refresh_rate,canvas_name,canvas_colour) {
       }
     }
   }
+  this.createPlayer = function(x,y,radius,material) {
+    for (var i = 0; i < materials.length; i++) {
+      if (material == materials[i].name) {
+        var obj = new Circle(x,y,radius,materials[i],false,true)
+        objects.push(obj)
+      }
+    }
+  }
   this.createRectangle = function(x,y,width,height,material) {
     for (var i = 0; i < materials.length; i++) {
       if (material == materials[i].name) {

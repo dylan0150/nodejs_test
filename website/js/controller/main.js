@@ -1,10 +1,10 @@
 window.onload = function() {
 
-  physx = new PhysicsEngine(120,'canvas','black')
+  physx = new PhysicsEngine(75,'canvas','black')
 
-  physx.createForce(9.8,['mass'],0,[],'x')
-  physx.createForce(0,[],9.8,['mass'],'y')
-  physx.createForce(-0.1,['height','dx'],-0.1,['width','dy'])
+  physx.createForce(9.8,['mass'],0,[],'x') //x gravity
+  physx.createForce(0,[],9.8,['mass'],'y') //y gravity
+  physx.createForce(-0.1,['height','dx'],-0.1,['width','dy']) //air resistance
 
   physx.createMaterial('rubber',1,0.75,0.75,'orange')
   physx.createMaterial('steel',25,0.5,0.5,'grey')
@@ -12,9 +12,9 @@ window.onload = function() {
   physx.createStaticRectangle(0,780,800,25,'steel')
   physx.createStaticRectangle(0,-5,800,25,'steel')
   physx.createStaticRectangle(-5,0,25,800,'steel')
-  physx.createStaticRectangle(780,0,25,800,'steel')
+  physx.createStaticRectangle(780,0,25,800,'steel') //bounds
 
-  physx.createPlayer(50,50,12,'rubber')
+  physx.createPlayer(50,50,12,'rubber') //player
 
 }
 
