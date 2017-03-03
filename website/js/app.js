@@ -5,10 +5,10 @@ var app = angular.module('nodeApp', [
   .config(function($stateProvider, $urlRouterProvider) {
     $stateProvider
 
-      .state('home', {
-        url: '/home',
-        templateUrl: 'templates/home.html',
-        controller: 'homeCtrl',
+      .state('ball', {
+        url: '/ball',
+        templateUrl: 'templates/ball.html',
+        controller: 'ballCtrl',
         resolve: {
 
         }
@@ -24,5 +24,5 @@ var app = angular.module('nodeApp', [
       })
 
     $urlRouterProvider
-      .otherwise('/home')
+      .otherwise('/ball')
   })
