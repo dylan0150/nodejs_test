@@ -14,12 +14,19 @@ window.onload = function() {
   physx.createStaticRectangle(-5,0,25,800,'steel')
   physx.createStaticRectangle(780,0,25,800,'steel')
 
-  physx.createCircle(50,50,5,'rubber')
+  physx.createPlayer(50,50,12,'rubber')
 
 }
 
 var test = function() {
   console.log(physx)
+  console.log(physx.getWindow())
+  console.log(physx.getConstants())
+  console.log(physx.getObjects())
+  console.log(physx.getForces())
+  console.log(physx.getMaterials())
+  console.log("Physics Updates: "+physx.getTime())
+  console.log("Frame Draws: "+physx.getFrame())
 }
 
 var x_plus = function() {

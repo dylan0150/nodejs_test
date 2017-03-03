@@ -2,6 +2,7 @@ var PhysicsEngine = function(refresh_rate,canvas_name,canvas_colour) {
 
   //VARIABLES
   var time      = 0
+  var frame     = 0
   var objects   = []
   var forces    = []
   var materials = []
@@ -9,6 +10,13 @@ var PhysicsEngine = function(refresh_rate,canvas_name,canvas_colour) {
   var c         = document.getElementById('canvas')
   var cc        = c.getContext('2d')
   var paused    = false
+
+  var canvas_window = {
+    x: 0,
+    y: 0,
+    width: c.width,
+    height: c.height
+  }
 
   var constants = {
      x  :0,
@@ -18,6 +26,12 @@ var PhysicsEngine = function(refresh_rate,canvas_name,canvas_colour) {
   //ACCESSOR FUNCTIONS
   this.getTime = function() {
     return time
+  }
+  this.getFrame = function() {
+    return frame
+  }
+  this.getWindow = function() {
+    return canvas_window
   }
   this.getObjects = function() {
     return objects
@@ -44,14 +58,23 @@ var PhysicsEngine = function(refresh_rate,canvas_name,canvas_colour) {
     if (paused) {
       engine = setInterval(update,1000/refresh_rate)
       paused = false
+      window.requestAnimationFrame(draw)
     }
   }
 
   //OBJECT CREATION FUNCTIONS
+  this.createPlayer = function(x,y,radius,material) {
+    for (var i = 0; i < materials.length; i++) {
+      if (material == materials[i].name) {
+        var obj = new Circle(x,y,radius,materials[i],false,true)
+        objects.push(obj)
+      }
+    }
+  }
   this.createRectangle = function(x,y,width,height,material) {
     for (var i = 0; i < materials.length; i++) {
       if (material == materials[i].name) {
-        var obj = new Rectangle(x,y,width,height,materials[i],false)
+        var obj = new Rectangle(x,y,width,height,materials[i],false,false)
         objects.push(obj)
       }
     }
@@ -59,7 +82,7 @@ var PhysicsEngine = function(refresh_rate,canvas_name,canvas_colour) {
   this.createCircle = function(x,y,radius,material) {
     for (var i = 0; i < materials.length; i++) {
       if (material == materials[i].name) {
-        var obj = new Circle(x,y,radius,materials[i],false)
+        var obj = new Circle(x,y,radius,materials[i],false,false)
         objects.push(obj)
       }
     }
@@ -67,7 +90,15 @@ var PhysicsEngine = function(refresh_rate,canvas_name,canvas_colour) {
   this.createStaticRectangle = function(x,y,width,height,material) {
     for (var i = 0; i < materials.length; i++) {
       if (material == materials[i].name) {
-        var obj = new Rectangle(x,y,width,height,materials[i],true)
+        var obj = new Rectangle(x,y,width,height,materials[i],true,false)
+        objects.push(obj)
+      }
+    }
+  }
+  this.createStaticCircle = function(x,y,width,height,material) {
+    for (var i = 0; i < materials.length; i++) {
+      if (material == materials[i].name) {
+        var obj = new Circle(x,y,radius,materials[i],true,false)
         objects.push(obj)
       }
     }
@@ -82,7 +113,8 @@ var PhysicsEngine = function(refresh_rate,canvas_name,canvas_colour) {
   }
 
   //CLASSES
-  var Rectangle = function(x,y,width,height,material,is_static) {
+  var Rectangle = function(x,y,width,height,material,is_static,player) {
+    this.player = player
     this.id = n++
     this.type = 'rectangle'
     this.x = x
@@ -99,7 +131,8 @@ var PhysicsEngine = function(refresh_rate,canvas_name,canvas_colour) {
       this.dy = Math.floor(Math.random()*25)
     }
   }
-  var Circle = function(x,y,radius,material,is_static) {
+  var Circle = function(x,y,radius,material,is_static,player) {
+    this.player = player
     this.id = n++
     this.type = 'circle'
     this.x = x
@@ -135,11 +168,17 @@ var PhysicsEngine = function(refresh_rate,canvas_name,canvas_colour) {
   //PHYSX UPDATES
   var update = function() {
     time++
-    cc.fillStyle = canvas_colour
-    cc.fillRect(0,0,c.width,c.height)
     applyForces()
     moveObjects()
+  }
+  var draw = function() {
+    frame++
+    cc.fillStyle = canvas_colour
+    cc.fillRect(0,0,c.width,c.height)
     drawObjects()
+    if (!paused) {
+      window.requestAnimationFrame(draw)
+    }
   }
   var applyForces = function() {
     for (var i = 0; i < objects.length; i++) {
@@ -201,6 +240,10 @@ var PhysicsEngine = function(refresh_rate,canvas_name,canvas_colour) {
       if (obj.x == cache_x) {
         obj.dx = 0
       }
+      if (obj.player) {
+        canvas_window.x = obj.x - canvas_window.width/2
+        canvas_window.y = obj.y - canvas_window.height/2
+      }
     }
   }
   var drawObjects = function() {
@@ -210,11 +253,11 @@ var PhysicsEngine = function(refresh_rate,canvas_name,canvas_colour) {
       cc.strokeStyle = obj.material.colour
       if (obj.type == 'circle') {
         cc.beginPath();
-        cc.arc(obj.x+obj.radius,obj.y+obj.radius,obj.radius,0,2*Math.PI);
+        cc.arc(obj.x+obj.radius-canvas_window.x,obj.y+obj.radius-canvas_window.y,obj.radius,0,2*Math.PI);
         cc.stroke();
         cc.fill();
       } else {
-        cc.fillRect(obj.x,obj.y,obj.width,obj.height)
+        cc.fillRect(obj.x-canvas_window.x,obj.y-canvas_window.y,obj.width,obj.height)
       }
     }
   }
@@ -334,4 +377,5 @@ var PhysicsEngine = function(refresh_rate,canvas_name,canvas_colour) {
   }
 
   var engine = setInterval(update,1000/refresh_rate)
+  window.requestAnimationFrame(draw)
 }
