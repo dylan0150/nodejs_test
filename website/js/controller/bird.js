@@ -1,35 +1,35 @@
 app.controller('birdCtrl',function($scope,$state,$interval){
   //=== COLOURS ===
-  var canvas_colour     = 'white'
-  var cloud_colour      = 'darkgrey'
-  var block_colour      = 'blue'
-  var floor_colour      = 'green'
+  var canvas_colour     = 'white';
+  var cloud_colour      = 'darkgrey';
+  var block_colour      = 'blue';
+  var floor_colour      = 'green';
 
   //=== SETTINGS ===
-  var block_chance      = 0.01
-  var cloud_chance      = 0.01
-  var terrain_scatter   = 0.05
+  var block_chance      = 0.01;
+  var cloud_chance      = 0.01;
+  var terrain_scatter   = 0.05;
   var enable_hitbox     = false;
-  var refresh_rate      = 75
-  var floor_height      = 75
-  var floor_ceil        = 150
-  var speed             = 4
-  var gravity           = 0.5
-  var air_resistance    = 0.96
-  var lift              = 3
-  var player_dimension  = 25
+  var refresh_rate      = 75;
+  var floor_height      = 75;
+  var floor_ceil        = 150;
+  var speed             = 4;
+  var gravity           = 0.5;
+  var air_resistance    = 0.96;
+  var lift              = 3;
+  var player_dimension  = 25;
 
   //=== VARIABLES ===
-  var floor_up          = false
-  var floor_down        = false
-  var frame             = 0
-  var distance          = 0
-  var paused            = false
-  var game_over         = false
-  var terrain           = []
+  var floor_up          = false;
+  var floor_down        = false;
+  var frame             = 0;
+  var distance          = 0;
+  var paused            = false;
+  var game_over         = false;
+  var terrain           = [];
 
   var k = {
-    space: false
+    space: false;
   }
 
   //=== CLASSES ===
