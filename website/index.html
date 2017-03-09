@@ -32,17 +32,17 @@
   </head>
   <body ng-app="nodeApp">
 
-    <canvas id="canvas" width="800", height="800"></canvas>
+    <canvas id="canvas" width="700", height="400"></canvas>
 
-    <button type="button" name="button" onclick="test()">DUMP INFO</button>
+    <p>
+      Hold Space to fly
+    </p>
 
-    <button type="button" name="button" onclick="pause()">Pause</button>
-    <button type="button" name="button" onclick="resume()">Resume</button>
-
-    <button type="button" name="button" onclick="x_plus()">Right Gravity</button>
-    <button type="button" name="button" onclick="x_minus()">Left Gravity</button>
-    <button type="button" name="button" onclick="y_plus()">Up Gravity</button>
-    <button type="button" name="button" onclick="y_minus()">Down Gravity</button>
+    <p>
+      <button onclick="pause()">Pause</button>
+      <button onclick="resume()">Resume</button>
+      <button onclick="restart()">Try Again</button>
+    </p>
 
   </body>
 </html>
