@@ -28,12 +28,13 @@ app.controller('birdCtrl',function($scope,$state,$interval){
   }
   $scope.restart = function() {
     if ($scope.game_over) {
+      $scope.paused = true
       noclip = false;
-      p.animation = 'fly'
-      clearInterval(engine)
-      p.y = c.height/2 - player_dimension/2
+      p.y = c.height/2 - p.height/2
       p.dy = 0
       p.dx = 0
+      p.animation = 'flying'
+      p.loop_frame = 1
       terrain = []
       floor_height = 75
       for (var i = 0; i < c.width; i++) {
@@ -44,6 +45,7 @@ app.controller('birdCtrl',function($scope,$state,$interval){
       $scope.game_over = false
       distance = 0
       frame = 0
+      clearInterval(engine)
       engine = setInterval(update,1000/refresh_rate)
     }
   }
@@ -66,7 +68,6 @@ app.controller('birdCtrl',function($scope,$state,$interval){
   var gravity           = 0.5;
   var air_resistance    = 0.96;
   var lift              = 3;
-  var player_dimension  = 25;
   var cloud_gap         = 75;
   var block_gap         = 75;
 
@@ -85,15 +86,17 @@ app.controller('birdCtrl',function($scope,$state,$interval){
   }
 
   //=== CLASSES ===
-  var Player = function(x,y,width,height) {
+  var Player = function(x,y,width,height,imgwidth,imgheight) {
     //BEGIN ANIMATION
       var fly_img     = new Image()
+      var flying_img  = new Image()
       var dead_img    = new Image()
       fly_img.src     = "img/flapper.png"
+      flying_img.src  = "img/flying.png"
       dead_img.src    = "img/dead.png"
-      this.animation  = 'fly'
+      this.animation  = 'flying'
       this.loop_frame = 1
-      this.loop_speed = 5
+      this.loop_speed = 8
       this.loop = {
         fly: {
           img:fly_img,
@@ -114,6 +117,14 @@ app.controller('birdCtrl',function($scope,$state,$interval){
           ],
           width:551/5,
           height:304/3
+        },
+        flying: {
+          img:flying_img,
+          frames:[
+            [0,0],[1,0],[2,0],[3,0],[4,0],[5,0],[6,0],[7,0]
+          ],
+          width:338,
+          height:300
         }
       }
     //END ANIMATION
@@ -123,8 +134,8 @@ app.controller('birdCtrl',function($scope,$state,$interval){
     this.dy         = 0
     this.width      = width
     this.height     = height
-    this.imgwidth   = width*2
-    this.imgheight  = height*2
+    this.imgwidth   = imgwidth
+    this.imgheight  = imgheight
   }
   var Floor = function(x,y,width,height) {
     this.type = 'floor'
@@ -229,7 +240,7 @@ app.controller('birdCtrl',function($scope,$state,$interval){
         p.loop_frame++
       }
     }
-    ctx.drawImage(p.loop[p.animation].img,lx*lw,ly*lh,lw,lh,p.x-15,p.y-16,p.imgwidth,p.imgheight)
+    ctx.drawImage(p.loop[p.animation].img,lx*lw,ly*lh,lw,lh,p.x-20,p.y-20,p.imgwidth,p.imgheight)
     if (enable_hitbox) {
       ctx.strokeStyle = 'black'
       ctx.strokeRect(p.x,p.y,p.width,p.height)
@@ -343,8 +354,11 @@ app.controller('birdCtrl',function($scope,$state,$interval){
 
   var c     = document.getElementById('canvas')
   var ctx   = c.getContext('2d')
-  var p_d   = player_dimension
-  var p     = new Player(25,c.height/2-p_d/2,p_d,p_d,'darkblue')
+  var p_w   = 40
+  var p_h   = 20
+  var i_w   = 74.36
+  var i_h   = 66
+  var p     = new Player(35,c.height/2-p_h/2,p_w,p_h,i_w,i_h)
   for (var i = 0; i < c.width; i++) {
     var floor = new Floor(c.width-i,c.height-floor_height,1,floor_height)
     terrain.push(floor)
