@@ -1,4 +1,53 @@
 app.controller('birdCtrl',function($scope,$state,$interval){
+
+  //=== SCOPE VARIABLES ===
+  $scope.paused     = false
+  $scope.game_over  = false
+
+  //=== CONTROLS ===
+  $scope.pause = function() {
+    if (!$scope.paused && !$scope.game_over) {
+      clearInterval(engine)
+      $scope.paused = true
+    }
+  }
+  $scope.resume = function() {
+    if ($scope.paused && !$scope.game_over) {
+      $scope.paused = false
+      engine = setInterval(update,1000/refresh_rate)
+      window.requestAnimationFrame(draw)
+    }
+  }
+  $scope.gameover = function() {
+    if (!$scope.game_over) {
+      $scope.game_over = true;
+      noclip = true;
+      p.dy = -gravity*26
+      p.animation = 'dead'
+    }
+  }
+  $scope.restart = function() {
+    if ($scope.game_over) {
+      noclip = false;
+      p.animation = 'fly'
+      clearInterval(engine)
+      p.y = c.height/2 - player_dimension/2
+      p.dy = 0
+      p.dx = 0
+      terrain = []
+      floor_height = 75
+      for (var i = 0; i < c.width; i++) {
+        var floor = new Floor(c.width-i,c.height-75,1,75)
+        terrain.push(floor)
+      }
+      $scope.paused = false
+      $scope.game_over = false
+      distance = 0
+      frame = 0
+      engine = setInterval(update,1000/refresh_rate)
+    }
+  }
+
   //=== COLOURS ===
   var canvas_colour     = 'white';
   var cloud_colour      = 'darkgrey';
@@ -10,57 +59,72 @@ app.controller('birdCtrl',function($scope,$state,$interval){
   var cloud_chance      = 0.01;
   var terrain_scatter   = 0.05;
   var enable_hitbox     = false;
-  var refresh_rate      = 75;
+  var refresh_rate      = 60;
   var floor_height      = 75;
   var floor_ceil        = 150;
-  var speed             = 4;
+  var speed             = 2;
   var gravity           = 0.5;
   var air_resistance    = 0.96;
   var lift              = 3;
   var player_dimension  = 25;
+  var cloud_gap         = 75;
+  var block_gap         = 75;
 
   //=== VARIABLES ===
   var floor_up          = false;
   var floor_down        = false;
   var frame             = 0;
   var distance          = 0;
-  var paused            = false;
-  var game_over         = false;
   var terrain           = [];
+  var c_cloud_gap       = 0;
+  var c_block_gap       = 0;
+  var noclip            = false;
 
   var k = {
-    space: false;
+    space: false
   }
 
   //=== CLASSES ===
   var Player = function(x,y,width,height) {
     //BEGIN ANIMATION
-    var img = new Image()
-    img.src = "img/flapper.png"
-    this.animation = 'fall'
-    this.loop_frame = 1
-    this.loop_speed = 5
-    this.loop = {
-      fall: {
-        img:img,
-        frames:[
-          [0,0],[1,0],[2,0],[3,0],[4,0],
-          [0,1],[1,1],[2,1],[3,1],[4,1],
-          [0,2],[1,2],[2,2],[3,2]
-        ],
-        width:912/5,
-        height:506/3
+      var fly_img     = new Image()
+      var dead_img    = new Image()
+      fly_img.src     = "img/flapper.png"
+      dead_img.src    = "img/dead.png"
+      this.animation  = 'fly'
+      this.loop_frame = 1
+      this.loop_speed = 5
+      this.loop = {
+        fly: {
+          img:fly_img,
+          frames:[
+            [0,0],[1,0],[2,0],[3,0],[4,0],
+            [0,1],[1,1],[2,1],[3,1],[4,1],
+            [0,2],[1,2],[2,2],[3,2]
+          ],
+          width:912/5,
+          height:506/3
+        },
+        dead: {
+          img:dead_img,
+          frames:[
+            [0,0],[1,0],[2,0],[3,0],[4,0],
+            [0,1],[1,1],[2,1],[3,1],[4,1],
+            [0,2],[1,2],[2,2],[3,2]
+          ],
+          width:551/5,
+          height:304/3
+        }
       }
-    }
     //END ANIMATION
-    this.x = x
-    this.y = y
-    this.dx = 0
-    this.dy = 0
-    this.width = width
-    this.height = height
-    this.imgwidth = width*2
-    this.imgheight = height*2
+    this.x          = x
+    this.y          = y
+    this.dx         = 0
+    this.dy         = 0
+    this.width      = width
+    this.height     = height
+    this.imgwidth   = width*2
+    this.imgheight  = height*2
   }
   var Floor = function(x,y,width,height) {
     this.type = 'floor'
@@ -89,9 +153,13 @@ app.controller('birdCtrl',function($scope,$state,$interval){
 
   //=== GAME LOOP ===
   var update = function() {
-    distance++
+    if (!$scope.game_over) {
+      distance++
+      if (k.space) { applyLift() }
+    }
+    c_cloud_gap++
+    c_block_gap++
     applyGravity()
-    if (k.space) { applyLift() }
     applyAirResistance()
     movePlayer()
     var h = floor_height
@@ -119,12 +187,14 @@ app.controller('birdCtrl',function($scope,$state,$interval){
     var floor = new Floor(c.width,c.height-h,speed,h,'green')
     terrain.push(floor)
     var n = Math.random()
-    if (n > 1-block_chance) {
+    if (n > 1-block_chance && c_block_gap > block_gap) {
+      c_block_gap = 0
       var h = 70+floor_height+60*Math.random()
       var block = new Block(c.width,c.height-h,80,h-15,'blue')
       terrain.push(block)
     }
-    if (n < cloud_chance) {
+    if (n < cloud_chance && c_cloud_gap > cloud_gap) {
+      c_cloud_gap = 0
       var h = 100+floor.height-15
       var block = new Cloud(c.width,Math.random()*c.height/4,80,45,'darkgrey')
       terrain.push(block)
@@ -140,7 +210,7 @@ app.controller('birdCtrl',function($scope,$state,$interval){
     drawBlocks();
     drawClouds();
     drawText();
-    if (!paused) {
+    if (!$scope.paused) {
       window.requestAnimationFrame(draw)
     }
   }
@@ -193,7 +263,7 @@ app.controller('birdCtrl',function($scope,$state,$interval){
     }
   }
   var drawText = function() {
-    if (game_over) {
+    if ($scope.game_over) {
       ctx.font = "36px Arial"
       ctx.fillStyle = 'red'
       ctx.strokeStyle = 'black'
@@ -233,6 +303,9 @@ app.controller('birdCtrl',function($scope,$state,$interval){
   }
   var collision = function() {
     var collide = false
+    if (noclip) {
+      return collide
+    }
     for (var i = 0; i < terrain.length; i++) {
       var t = terrain[i]
       if (
@@ -273,57 +346,16 @@ app.controller('birdCtrl',function($scope,$state,$interval){
     }
   })
 
-  //=== CONTROLS ===
-  $scope.pause = function() {
-    if (!paused && !game_over) {
-      clearInterval(engine)
-      paused = true
-    }
-  }
-  $scope.resume = function() {
-    if (paused && !game_over) {
-      paused = false
-      engine = $interval(update,1000/refresh_rate)
-      window.requestAnimationFrame(draw)
-    }
-  }
-  $scope.gameover = function() {
-    if (!game_over) {
-      clearInterval(engine)
-      paused = true
-      game_over = true
-    }
-  }
-  $scope.restart = function() {
-    if (game_over) {
-      p.y = c.height/2 - player_dimension/2
-      p.dy = 0
-      p.dx = 0
-      terrain = []
-      floor_height = 75
-      for (var i = 0; i < c.width; i++) {
-        var floor = new Floor(c.width-i,c.height-75,1,75)
-        terrain.push(floor)
-      }
-      paused = false
-      game_over = false
-      distance = 0
-      frame = 0
-      engine = $interval(update,1000/refresh_rate)
-      window.requestAnimationFrame(draw)
-    }
-  }
-
   //=== SETUP ===
-  var engine = $interval(update,1000/refresh_rate)
-  var c = document.getElementById('canvas')
-  var ctx = c.getContext('2d')
-  var p_d = player_dimension
-  var p = new Player(25,c.height/2-p_d/2,p_d,p_d,'darkblue')
+
+  var c     = document.getElementById('canvas')
+  var ctx   = c.getContext('2d')
+  var p_d   = player_dimension
+  var p     = new Player(25,c.height/2-p_d/2,p_d,p_d,'darkblue')
   for (var i = 0; i < c.width; i++) {
     var floor = new Floor(c.width-i,c.height-floor_height,1,floor_height)
     terrain.push(floor)
   }
+  var engine = setInterval(update,1000/refresh_rate)
   window.requestAnimationFrame(draw)
-
 })
