@@ -303,13 +303,10 @@ app.controller('birdCtrl',function($scope,$state,$interval){
   }
   var collision = function() {
     var collide = false
-    if (noclip) {
-      return collide
-    }
+    if (noclip) { return false }
     for (var i = 0; i < terrain.length; i++) {
       var t = terrain[i]
-      if (
-            p.y >= t.y - p.height
+      if (  p.y >= t.y - p.height
         &&  p.y <= t.y + t.height
         &&  p.x + p.width >= t.x
         &&  p.x <= t.x + t.width
@@ -317,15 +314,11 @@ app.controller('birdCtrl',function($scope,$state,$interval){
         collide = true
       }
     }
-    if (p.y < c.height
-      &&  p.y + p.dy + p.height >= c.height
-    ) {
+    if (p.y < c.height && p.y + p.dy + p.height >= c.height) {
       p.y = c.height - p.height
       collide = true
     }
-    if (p.y > 0
-      &&  p.y + p.dy < 0
-    ) {
+    if (p.y > 0 && p.y + p.dy < 0) {
       p.y = 0
       collide = true
     }
