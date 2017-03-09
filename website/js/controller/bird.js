@@ -102,8 +102,8 @@ app.controller('birdCtrl',function($scope,$state,$interval){
             [0,1],[1,1],[2,1],[3,1],[4,1],
             [0,2],[1,2],[2,2],[3,2]
           ],
-          width:912/5,
-          height:506/3
+          width:551/5,
+          height:304/3
         },
         dead: {
           img:dead_img,
@@ -205,10 +205,10 @@ app.controller('birdCtrl',function($scope,$state,$interval){
     frame++
     ctx.fillStyle = canvas_colour
     ctx.fillRect(0,0,c.width,c.height)
-    drawPlayer();
     drawFloor();
     drawBlocks();
     drawClouds();
+    drawPlayer();
     drawText();
     if (!$scope.paused) {
       window.requestAnimationFrame(draw)
