@@ -23,6 +23,15 @@ var app = angular.module('nodeApp', [
         }
       })
 
+      .state('bird', {
+        url: '/bird',
+        templateUrl: 'templates/bird.html',
+        controller: 'birdCtrl',
+        resolve: {
+
+        }
+      })
+
     $urlRouterProvider
       .otherwise('/main')
   })
