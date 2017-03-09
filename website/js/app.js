@@ -32,6 +32,15 @@ var app = angular.module('nodeApp', [
         }
       })
 
+      .state('rts', {
+        url: '/rts',
+        templateUrl: 'templates/rts.html',
+        controller: 'rtsCtrl',
+        resolve: {
+
+        }
+      })
+
     $urlRouterProvider
       .otherwise('/main')
   })
