@@ -17,6 +17,12 @@ app.controller('rtsCtrl', function($scope,$interval) {
       stop()
     }
   }
+  $scope.spawnAlly = function() {
+    new Unit('fighter',10,10,6,14,true,0)
+  }
+  $scope.spawnEnemy = function() {
+    new Unit('fighter',10,10,6,14,true,1)
+  }
 
   //SCOPE
   $scope.paused = false
@@ -178,7 +184,7 @@ app.controller('rtsCtrl', function($scope,$interval) {
     this.height = height
     this.type = { name: 'null', colour: 'white', passable: 0 }
     for (var i = 0; i < terrainTypes.length; i++) {
-      if (type == terrainTypes[i].name) {this.type == terrainTypes[i]}
+      if (type == terrainTypes[i].name) {this.type = terrainTypes[i]}
     }
     terrain.push(this)
   }
@@ -189,10 +195,16 @@ app.controller('rtsCtrl', function($scope,$interval) {
     this.colour = colour
     terrain_types.push(this)
   }
-  var Unit = function(type,x,y,width,height) {
+  var Unit = function(type,x,y,width,height,control,allegiance) {
+    this.ai = 0
+    this.allegiance = allegiance
+    this.controllable = control
     this.selected = false
-    this.target = {x:150,y:300}
     this.class = 'Unit'
+    this.target = {
+      x: x,
+      y: y
+    }
     this.setSeek = {
       target: 0,
       seeking: false
@@ -206,9 +218,9 @@ app.controller('rtsCtrl', function($scope,$interval) {
     this.ddy = 0
     this.width = width
     this.height = height
-    this.type = { name: 'null', colour: 'white', density: 1, speed: 6, acceleration: 1, range: 100 }
+    this.type = { name: 'null', colour: 'white', density: 1, speed: 6, acceleration: 1, range: 100, attacks:[] }
     for (var i = 0; i < unit_types.length; i++) {
-      if (type == unit_types[i].name) {this.type == unit_types[i]}
+      if (type == unit_types[i].name) {this.type = unit_types[i]}
     }
     this.mass = width * height * this.type.density
     this.accelerate = function() {
@@ -251,12 +263,27 @@ app.controller('rtsCtrl', function($scope,$interval) {
         }
       }
     }
-    this.run
-    this.select = function()    { this.selected = true; selected_units.push(this) }
+    this.spawn = function(u,w,h,t) {
+      var unit = new Unit(u,this.x+this.width,this.y+this.height,w,h,false,this.allegiance)
+      unit.setSeek.target = t.id
+      unit.setSeek.seeking = true
+    }
+    this.logic = function(){
+      this.ai++
+      if (this.ai % 100 == 0) {
+        for (var i = 0; i < units.length; i++) {
+          var u = units[i]
+          if ( u.allegiance != this.allegiance && getMag(u.x - u.width - this.x,u.y - u.height - this.y) < this.type.range ) {
+            this.spawn('missile',2,4,u)
+          }
+        }
+      }
+    }
+    this.select = function()    { if (this.controllable) { this.selected = true; selected_units.push(this) } }
     this.deselect = function()  { this.selected = false }
     units.push(this)
   }
-  var UnitType = function(name,colour,density,speed,acceleration) {
+  var UnitType = function(name,colour,density,speed,acceleration,range) {
     this.class = 'UnitType'
     this.id = n++
     this.name = name
@@ -264,6 +291,7 @@ app.controller('rtsCtrl', function($scope,$interval) {
     this.density = density
     this.speed = speed
     this.acceleration = acceleration
+    this.range = range
     unit_types.push(this)
   }
 
@@ -280,16 +308,15 @@ app.controller('rtsCtrl', function($scope,$interval) {
     time++
     moveCamera()
     moveUnits()
+    for (var i = 0; i < units.length; i++) {
+      if (units[i].type.name == 'fighter') { units[i].logic() }
+    }
   }
   var start = function(){
     loop = $interval(update,1000/refresh)
     draw()
-    for (var i = 0; i < 11; i++) {
-      new Unit('man',i*15,15,6,11)
-    }
-    for (var i = 0; i < 11; i++) {
-      new Unit('man',i*15,15,15,4)
-    }
+    new UnitType('fighter','white',1,5,0.5,25)
+    new UnitType('missile','white',1,12,0.2,0)
   }
   var stop = function(){
     $interval.cancel(loop)
@@ -408,6 +435,13 @@ app.controller('rtsCtrl', function($scope,$interval) {
       } else {
         if (direction == 'x+' || direction == 'x-') {u.dx *= u2.type.passable; u.x += u.dx }
         if (direction == 'y+' || direction == 'y-') {u.dy *= u2.type.passable; u.y += u.dy }
+      }
+    }
+    if (u.class == 'Unit' && u2.class == 'Unit' && u.type.name == 'missile') {
+      for (var i = units.length-1; i >= 0; i--) {
+        if (u.id == units[i].id) {
+          units.splice(i,1)
+        }
       }
     }
   }
