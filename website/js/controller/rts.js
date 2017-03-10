@@ -1,5 +1,9 @@
 app.controller('rtsCtrl', function($scope,$interval) {
 
+  var getMag = function(x,y) {
+    return Math.sqrt(x^2+y^2)
+  }
+
   //CANVAS
   var c = document.getElementById('rts')
   var ctx = c.getContext('2d')
@@ -118,27 +122,42 @@ app.controller('rtsCtrl', function($scope,$interval) {
     terrain_types.push(this)
   }
   var Unit = function(type,x,y,width,height) {
+    this.selected = false
+    this.target = {x:150,y:300}
     this.class = 'Unit'
     this.id = n++
     this.x = x
     this.y = y
     this.dx = 1
     this.dy = 1
+    this.ddx = 0
+    this.ddy = 0
     this.width = width
     this.height = height
-    this.type = { name: 'null', colour: 'white', density: 1 }
+    this.type = { name: 'null', colour: 'white', density: 1, speed: 10, acceleration: 1 }
     for (var i = 0; i < unit_types.length; i++) {
       if (type == unit_types[i].name) {this.type == unit_types[i]}
     }
     this.mass = width * height * this.type.density
+    this.accelerate = function() {
+      this.dx += this.ddx
+      this.dy += this.ddy
+      this.ddx = 0
+      this.ddy = 0
+    }
+    this.steer = function() {
+
+    }
     units.push(this)
   }
-  var UnitType = function(name,colour,density) {
+  var UnitType = function(name,colour,density,speed,acceleration) {
     this.class = 'UnitType'
     this.id = n++
     this.name = name
     this.colour = colour
     this.density = density
+    this.speed = speed
+    this.acceleration = acceleration
     unit_types.push(this)
   }
 
@@ -158,6 +177,7 @@ app.controller('rtsCtrl', function($scope,$interval) {
   var start = function(){
     loop = $interval(update,1000/refresh)
     draw()
+    new Unit('man',50,50,15,15)
   }
   var stop = function(){
     $interval.cancel(loop)
@@ -195,6 +215,8 @@ app.controller('rtsCtrl', function($scope,$interval) {
   var moveUnits = function() {
     for (var i = 0; i < units.length; i++) {
       var u = units[i]
+      u.steer()
+      u.accelerate()
       if( !collision_x(u,terrain) && !collision_x(u,units) ) { u.x += u.dx }
       if( !collision_y(u,terrain) && !collision_y(u,units) ) { u.y += u.dy }
     }
