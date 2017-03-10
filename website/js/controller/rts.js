@@ -1,9 +1,5 @@
 app.controller('rtsCtrl', function($scope,$interval) {
 
-  var getMag = function(x,y) {
-    return Math.sqrt(x^2+y^2)
-  }
-
   //CANVAS
   var c = document.getElementById('rts')
   var ctx = c.getContext('2d')
@@ -38,13 +34,82 @@ app.controller('rtsCtrl', function($scope,$interval) {
   var terrai_types = []
   var units = []
   var unit_types = []
+  var selected_units = []
 
   //OBJECTS
   var m = {
     l     : false,
     r     : false,
     x     : 0,
-    y     : 0
+    y     : 0,
+    sx    : 0,
+    sy    : 0,
+    select: function() {
+      selected_units = []
+      if (m.sx < m.x) {x = m.sx; x2 = m.x } else { x = m.x; x2 = m.sx }
+      if (m.sy < m.y) {y = m.sy; y2 = m.y } else { y = m.y; y2 = m.sy }
+      for (var i = 0; i < units.length; i++) {
+        var u = units[i]
+        if ( x + cam.x <= u.x + u.width
+          && x2 + cam.x >= u.x
+          && y + cam.y <= u.y + u.height
+          && y2 + cam.y >= u.y
+        ) { u.select() } else { u.deselect() }
+      }
+    },
+    target: function() {
+      var x = m.x + cam.x
+      var y = m.y + cam.y
+      var n = 0
+      var nx = 0
+      var ny = 0
+      var l = selected_units.length
+      var d = Math.ceil(Math.sqrt(l))
+      var gap = 1
+      var on_target = false
+      var target_id = 0
+      for (var i = 0; i < selected_units.length; i++) {
+        var u = selected_units[i]
+        if (u.width > gap)  { gap = u.width }
+        if (u.height > gap) { gap = u.height }
+      }
+      for (var i = 0; i < units.length; i++) {
+        var u = units[i]
+        if ( x + cam.x <= u.x + u.width
+          && x + cam.x >= u.x
+          && y + cam.y <= u.y + u.height
+          && y + cam.y >= u.y
+        ) { on_target = true; target_id = u.id }
+      }
+      for (var i = 0; i < terrain.length; i++) {
+        var u = terrain[i]
+        if ( x + cam.x <= u.x + u.width
+          && x + cam.x >= u.x
+          && y + cam.y <= u.y + u.height
+          && y + cam.y >= u.y
+        ) { on_target = true; target_id = u.id }
+      }
+      gap += 5
+      for (var i = 0; i < units.length; i++) {
+        var u = units[i]
+        if (u.selected) {
+          u.target.x = x + nx*gap
+          u.target.y = y + ny*gap
+          if (on_target) {
+            u.setSeek.seeking = true
+            u.setSeek.target = target_id
+          } else {
+            u.setSeek.seeking = false
+          }
+          if (nx == d-1) {
+            nx = 0
+            ny++
+          } else {
+            nx++
+          }
+        }
+      }
+    }
   }
   var k = {
     up    : false,
@@ -66,12 +131,15 @@ app.controller('rtsCtrl', function($scope,$interval) {
 
   //EVENTLISTENERS
   c.addEventListener('mousedown', function(e){
-    if (e.button == 0) { m.l = true }
-    if (e.button == 2) { m.r = true }
+    e.preventDefault()
+    if (e.button == 0) { m.l = true; m.sx = m.x; m.sy = m.y }
+    if (e.button == 2) { m.r = true; m.target() }
   })
   c.addEventListener('mouseup', function(e){
-    if (e.button == 0) { m.l = false }
+    e.preventDefault()
+    if (e.button == 0) { m.l = false; m.select() }
     if (e.button == 2) { m.r = false }
+
   })
   c.addEventListener('mousemove', function(e){
     m.x = e.clientX
@@ -125,16 +193,20 @@ app.controller('rtsCtrl', function($scope,$interval) {
     this.selected = false
     this.target = {x:150,y:300}
     this.class = 'Unit'
+    this.setSeek = {
+      target: 0,
+      seeking: false
+    }
     this.id = n++
     this.x = x
     this.y = y
-    this.dx = 1
-    this.dy = 1
+    this.dx = 15
+    this.dy = 5
     this.ddx = 0
     this.ddy = 0
     this.width = width
     this.height = height
-    this.type = { name: 'null', colour: 'white', density: 1, speed: 10, acceleration: 1 }
+    this.type = { name: 'null', colour: 'white', density: 1, speed: 6, acceleration: 1, range: 100 }
     for (var i = 0; i < unit_types.length; i++) {
       if (type == unit_types[i].name) {this.type == unit_types[i]}
     }
@@ -146,8 +218,42 @@ app.controller('rtsCtrl', function($scope,$interval) {
       this.ddy = 0
     }
     this.steer = function() {
-
+      var dx = this.target.x - this.x
+      var dy = this.target.y - this.y
+      if (dy*dy < 0.1 && dx*dx < 0.1) {
+        this.ddx += -this.dx
+        this.ddy += -this.dy
+      } else {
+        var dm = getMag(dx,dy)
+        var c = this.type.speed
+        dx = (dx/dm)*c
+        dy = (dy/dm)*c
+        var ddx = dx - this.dx
+        var ddy = dy - this.dy
+        var ddm = getMag(dx,dy)
+        var a = this.type.acceleration
+        ddx = (ddx/ddm)*a
+        ddy = (ddy/ddm)*a
+        this.ddx += ddx
+        this.ddy += ddy
+      }
     }
+    this.seek = function() {
+      for (var i = 0; i < units.length; i++) {
+        var u = units[i]
+        if (u.id == this.setSeek.target) {
+          this.target.x = u.x
+          this.target.y = u.y
+          if (getMag(u.x - this.x,u.y - this.y) < this.type.range) {
+            this.target.x = this.x
+            this.target.y = this.y
+          }
+        }
+      }
+    }
+    this.run
+    this.select = function()    { this.selected = true; selected_units.push(this) }
+    this.deselect = function()  { this.selected = false }
     units.push(this)
   }
   var UnitType = function(name,colour,density,speed,acceleration) {
@@ -167,6 +273,7 @@ app.controller('rtsCtrl', function($scope,$interval) {
     drawBackground()
     drawTerrain()
     drawUnits()
+    if (m.l) {drawSelect()}
     if (!$scope.paused) { window.requestAnimationFrame(draw) }
   }
   var update = function(){
@@ -177,7 +284,12 @@ app.controller('rtsCtrl', function($scope,$interval) {
   var start = function(){
     loop = $interval(update,1000/refresh)
     draw()
-    new Unit('man',50,50,15,15)
+    for (var i = 0; i < 11; i++) {
+      new Unit('man',i*15,15,6,11)
+    }
+    for (var i = 0; i < 11; i++) {
+      new Unit('man',i*15,15,15,4)
+    }
   }
   var stop = function(){
     $interval.cancel(loop)
@@ -202,6 +314,10 @@ app.controller('rtsCtrl', function($scope,$interval) {
       ctx.fillRect(u.x-cam.x,u.y-cam.y,u.width,u.height)
     }
   }
+  var drawSelect = function() {
+    ctx.strokeStyle = 'white'
+    ctx.strokeRect(m.sx,m.sy,m.x-m.sx,m.y-m.sy)
+  }
 
   //UPDATE
   var moveCamera = function() {
@@ -215,6 +331,7 @@ app.controller('rtsCtrl', function($scope,$interval) {
   var moveUnits = function() {
     for (var i = 0; i < units.length; i++) {
       var u = units[i]
+      if ( u.setSeek.seeking ) { u.seek() }
       u.steer()
       u.accelerate()
       if( !collision_x(u,terrain) && !collision_x(u,units) ) { u.x += u.dx }
@@ -225,7 +342,8 @@ app.controller('rtsCtrl', function($scope,$interval) {
     var collide = false
     for (var i = 0; i < array.length; i++) {
       var t = array[i]
-      if ( u.x > 0
+      if ( u.dx > 0
+        && u.id != t.id
         && u.x + u.width < t.x
         && u.x + u.dx + u.width >= t.x
         && u.y <= t.y + t.height
@@ -234,7 +352,8 @@ app.controller('rtsCtrl', function($scope,$interval) {
         collide = true
         event_Collision(u,t,'x+')
       }
-      if ( u.x < 0
+      if ( u.dx < 0
+        && u.id != t.id
         && u.x > t.x + t.width
         && u.x + u.dx <= t.x + t.width
         && u.y <= t.y + t.height
@@ -250,7 +369,8 @@ app.controller('rtsCtrl', function($scope,$interval) {
     var collide = false
     for (var i = 0; i < array.length; i++) {
       var t = array[i]
-      if ( u.y > 0
+      if ( u.dy > 0
+        && u.id != t.id
         && u.y + u.height < t.y
         && u.y + u.dy + u.height >= t.y
         && u.x <= t.x + t.width
@@ -259,7 +379,8 @@ app.controller('rtsCtrl', function($scope,$interval) {
         collide = true
         event_Collision(u,t,'y+')
       }
-      if ( u.y < 0
+      if ( u.dy < 0
+        && u.id != t.id
         && u.y > t.y + t.height
         && u.y + u.dy <= t.y + t.height
         && u.x <= t.x + t.width
@@ -270,6 +391,10 @@ app.controller('rtsCtrl', function($scope,$interval) {
       }
     }
     return collide
+  }
+  var getMag = function(x,y) {
+    var mag = Math.sqrt((x*x)+(y*y))
+    return mag
   }
 
   //EVENTS
