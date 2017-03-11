@@ -1,10 +1,6 @@
-<script src="js/controller/objects/World.js"></script>
-<script src="js/controller/objects/Terrain.js"></script>
-<script src="js/controller/objects/Unit.js"></script>
-
 <canvas id="canvas" width="500" height="500" oncontextmenu="return false;"></canvas>
 
 <p>
-  <button ng-show="paused" ng-click="resume()">Resume</button>
-  <button ng-show="!paused" ng-click="pause()">Pause</button>
+  <button ng-show="paused" ng-click="start()">Resume</button>
+  <button ng-show="!paused" ng-click="stop()">Pause</button>
 </p>

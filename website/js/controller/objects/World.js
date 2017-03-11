@@ -1,18 +1,26 @@
-var World = function( options, canvas ) {
-  var loop
-  var c       = canvas
-  var ctx     = c.getContext('2d')
-  this.time   = 0
-  this.frame  = 0
-  this.paused = true
+var World = function( canvas, refresh, options ) {
+  c              = canvas
+  ctx            = c.getContext('2d')
+  paused         = true
+  cam = {
+    x     : 0,
+    y     : 0,
+    speed : 3,
+    lock  : false
+  }
 
-  this.environment = {
+  var loop
+  var time       = 0
+  var frame      = 0
+  var background = 'black'
+
+  var environment = {
     length:0,
     forEach: function( _function, _class ) {
-      for (var key in this.environment) {
-        var obj = this.environment[key]
+      for (var key in this) {
+        var obj = this[key]
         if (obj.isentity) {
-          if (typeof _class == undefined) {
+          if (_class == undefined) {
             _function(obj)
           } else if (obj.class == _class) {
             _function(obj)
@@ -20,6 +28,19 @@ var World = function( options, canvas ) {
         }
       }
     }
+  }
+  this.add = function (object) {
+    var n = environment.length++
+    object['id'] = n
+    environment[n] = object
+  }
+  this.remove = function(id) {
+    if (typeof environment[id] != undefined) {
+      delete environment[id]
+    }
+  }
+  this.get = function(){
+    return environment
   }
 
   var m = {
@@ -41,13 +62,6 @@ var World = function( options, canvas ) {
     e     : false,
     r     : false,
     space : false
-  }
-
-  var cam = {
-    x     : 0,
-    y     : 0,
-    speed : 3,
-    lock  : false
   }
 
   for (var key in options) {
@@ -93,30 +107,16 @@ var World = function( options, canvas ) {
 
   //LOOP
   var draw = function(){
-    this.frame++
+    frame++
     drawBackground()
-    for (var key in this.environment[key]) {
-      var obj = this.environment[key]
-      if (typeof obj == 'object') {
-        if (obj.isentity) {
-          obj.show()
-        }
-      }
-    }
+    environment.forEach(function(e){e.show()})
     if (m.l) { drawSelect() }
-    if (!this.paused) { window.requestAnimationFrame(draw) }
+    if (!paused) { window.requestAnimationFrame(draw) }
   }
   var update = function(){
-    this.time++
+    time++
     moveCamera()
-    for (var key in this.environment[key]) {
-      var obj = this.environment[key]
-      if (typeof obj == 'object') {
-        if (obj.isentity) {
-          obj.update()
-        }
-      }
-    }
+    environment.forEach(function(e){ e.update() })
   }
   var drawBackground = function() {
     ctx.fillStyle = background
@@ -134,9 +134,18 @@ var World = function( options, canvas ) {
       if (k.left)   { cam.x -= cam.speed }
     }
   }
+  this.start = function () {
+    paused = false
+    loop = setInterval(update,1000/refresh)
+    draw()
+  }
+  this.stop = function() {
+    paused = true
+    clearInterval(loop)
+  }
 
   //PHYSICS
-  var collision = function(u) {
+  this.collision = function(u) {
     var x = false
     var y = false
     environment.forEach(function(e){
@@ -170,27 +179,4 @@ var World = function( options, canvas ) {
     })
     return { x:x, y:y }
   }
-}
-
-World.prototype.add = function (object) {
-  var n = this.environment.length++
-  object.id = n
-  this.environment[n] = object
-}
-
-World.prototype.remove = function(id) {
-  if (typeof this.environment[id] != undefined) {
-    delete this.environment[id]
-  }
-}
-
-World.prototype.start = function () {
-  loop = setInterval(update,1000/refresh)
-  draw()
-  this.paused = false
-}
-
-World.prototype.stop = function() {
-  clearInterval(loop)
-  this.paused = true
 }

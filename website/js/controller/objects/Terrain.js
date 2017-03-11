@@ -1,4 +1,4 @@
-var Terrain = function( world, options, logic, collide ) {
+var Terrain = function( world, logic, collide, options ) {
   this.class      = 'Terrain'
   this.time       = 0
   this.collision  = true
@@ -14,25 +14,13 @@ var Terrain = function( world, options, logic, collide ) {
   }
   if  ( typeof logic    != undefined ) { this.logic   = logic }
   if  ( typeof collide  != undefined ) { this.collide = collide }
+  this.update = function () {
+    this.time++
+    if (typeof logic == 'function') { logic(this) }
+  };
+  this.show = function () {
+    ctx.fillStyle = this.colour
+    ctx.fillRect(this.x-cam.x-this.width/2,this.y-cam.y-this.height/2,this.width,this.height)
+  };
   world.add(this)
-};
-
-Terrain.prototype.show = function () {
-  ctx.fillStyle = this.colour
-  ctx.rotate(this.r*Math.PI/180)
-  ctx.fillRect(this.x-cam.x-this.width/2,this.y-cam.y-this.height/2,this.width,this.height)
-  ctx.rotate(-this.r*Math.PI/180)
-};
-
-Terrain.prototype.update = function () {
-  this.time++
-  this.logic()
-};
-
-Terrain.prototype.collide = function () {
-
-};
-
-Terrain.prototype.logic = function () {
-  
 };
