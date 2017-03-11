@@ -109,7 +109,7 @@ var World = function( canvas, refresh, options ) {
   var draw = function(){
     frame++
     drawBackground()
-    environment.forEach(function(e){e.show()})
+    environment.forEach(function(e){ e.show() })
     if (m.l) { drawSelect() }
     if (!paused) { window.requestAnimationFrame(draw) }
   }
@@ -135,13 +135,17 @@ var World = function( canvas, refresh, options ) {
     }
   }
   this.start = function () {
-    paused = false
-    loop = setInterval(update,1000/refresh)
-    draw()
+    if (paused) {
+      paused = false
+      loop = setInterval(update,1000/refresh)
+      draw()
+    }
   }
   this.stop = function() {
-    paused = true
-    clearInterval(loop)
+    if (!paused) {
+      paused = true
+      clearInterval(loop)
+    }
   }
 
   //PHYSICS

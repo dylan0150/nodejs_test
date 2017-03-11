@@ -55,7 +55,6 @@ var Unit = function( world, logic, collide, options ) {
     while (this.r >= 360) { this.r -= 360 }
     while (this.r < 0)    { this.r += 360 }
     if ( !this.collision ) { var c = { x:false, y:false, r:false } } else { var c = world.collision(this) }
-    var c = { x:false, y:false, r:false }
     if (this.clip) {
       if (!c.x) { this.x += this.dx }
       if (!c.y) { this.y += this.dy }
