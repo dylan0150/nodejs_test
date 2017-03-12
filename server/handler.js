@@ -1,6 +1,8 @@
 var config      = require('./config')
+var auth        = require('./../api/auth')
 
 exports.get = function(request, response) {
+  Auth(request)
   var path = ""
   var url_paths = request.url.split('/')
   for (var i = 2; i < url_paths.length; i++) {
@@ -35,6 +37,7 @@ exports.get = function(request, response) {
 }
 
 exports.post = function(request, response) {
+  Auth(request)
   var path = ""
   var url_paths = request.url.split('/')
   for (var i = 2; i < url_paths.length; i++) {
@@ -66,4 +69,8 @@ exports.post = function(request, response) {
     })
     response.end('404: Path not found on server')
   }
+}
+
+var Auth = function(){
+  
 }

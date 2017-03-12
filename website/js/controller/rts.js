@@ -3,6 +3,12 @@ app.controller('rtsCtrl', function($scope,$state){
   $scope.getMain = function() {
     return $state.current.name == 'rts'
   }
+  $scope.getUserUniverses = function() {
+
+  }
+  $scope.goToProfile = function() {
+    $state.go('rts.profile')
+  }
 
   var universe_id = 1
 

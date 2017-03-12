@@ -16,10 +16,10 @@ exports.get = function(urlparams) {
       var obj = json.universe[data]
     }
     if (typeof obj != 'undefined') {
-      return {ok:true,universe:obj}
+      return {'ok':true,'universe':obj}
     }
     else {
-      return {ok:false}
+      return {'ok':false}
     }
   }
 }
@@ -32,7 +32,6 @@ exports.post = function(_data,urlparams) {
     }
   }
   var json = JSON.parse(fs.readFileSync(db_path+'universe.json','utf8'))
-  console.log(_data)
   if (typeof data != 'undefined') {
     json.universe[data] = _data
     var id = data
@@ -42,7 +41,6 @@ exports.post = function(_data,urlparams) {
     var id = json.universe.length
     json = JSON.stringify(json)
   }
-  console.log(json)
   fs.writeFile(db_path+'universe.json',json,'utf8')
-  return {id: id,ok:true}
+  return {id: id,'ok':true}
 }

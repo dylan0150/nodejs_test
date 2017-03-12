@@ -1,5 +1,5 @@
 var app = angular.module('nodeApp', [
-  'ui.router'
+  'ui.router','ngCookies'
 ])
 
   .config(function($stateProvider, $urlRouterProvider) {
