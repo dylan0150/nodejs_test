@@ -1,4 +1,4 @@
-var World = function( canvas, refresh, options ) {
+var World = function( canvas, refresh, seed ) {
   c              = canvas
   ctx            = c.getContext('2d')
   paused         = true
@@ -64,9 +64,6 @@ var World = function( canvas, refresh, options ) {
     space : false
   }
 
-  for (var key in options) {
-    this[key] = options[key]
-  }
   //EVENTS
   c.addEventListener('mousedown', function(e){
     e.preventDefault()

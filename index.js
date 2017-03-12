@@ -2,12 +2,14 @@
 var express         = require('express')
 var config          = require('./server/config')
 var request_handler = require('./server/handler')
+var bodyParser      = require('body-parser')
 
 //VARIABLES
 var exapp           = express()
 
 //WEBSITE
 exapp.use(express.static('website'))
+exapp.use(bodyParser.json())
 
 //API
 exapp.get('/api*', function(request,response){

@@ -1,6 +1,7 @@
-<canvas id="canvas" width="500" height="500" oncontextmenu="return false;"></canvas>
+<div ng-if="getMain()">
+  <h1>RTS</h1>
+  <p><button ng-click="openUniverse()">Universe</button></p>
+  <p><button ng-click="goToProfile()">Profile</button></p>
+</div>
 
-<p>
-  <button ng-show="paused" ng-click="start()">Resume</button>
-  <button ng-show="!paused" ng-click="stop()">Pause</button>
-</p>
+<ui-view></ui-view>

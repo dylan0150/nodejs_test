@@ -72,3 +72,13 @@ var Unit = function( world, logic, collide, options ) {
 
   world.add(this)
 }
+
+/*
+new Unit(world,
+  function(unit){
+    unit.applyForce(0,0,0)
+  },
+  function(unit){
+    console.log('I collided')
+  },options)
+*/
