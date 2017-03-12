@@ -43,6 +43,6 @@ exports.post = function(_data,urlparams) {
     json = JSON.stringify(json)
   }
   console.log(json)
-  fs.writeFile(path+'api/universe.json',json,'utf8')
+  fs.writeFile(db_path+'universe.json',json,'utf8')
   return {id: id,ok:true}
 }
