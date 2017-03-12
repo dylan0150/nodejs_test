@@ -1,6 +1,5 @@
 app.controller('rtsCtrl', function($scope,$state){
 
-  console.log($state)
   $scope.getMain = function() {
     return $state.current.name == 'rts'
   }
