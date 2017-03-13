@@ -42,7 +42,7 @@ var app = angular.module('nodeApp', [
           templateUrl: 'templates/rts/universe.html',
           controller: 'universeCtrl',
           resolve: {
-            getUniverse: function($stateParams,$state,universeServe){
+            getUniverse: function($stateParams,$state,universeServe) {
               return universeServe.get($stateParams.universe_id).then(function(response){
                 if (response.ok) {
                   return response

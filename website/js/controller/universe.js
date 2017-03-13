@@ -1,8 +1,6 @@
 app.controller('universeCtrl', function($scope,$state,universeServe,getUniverse,$cookies){
   $scope.state = $state
-  console.log(getUniverse)
-
-  var universe = new Universe(getUniverse)
+  var universe = new Universe(getUniverse.universe)
   console.log(universe)
 
   $scope.save = function() {

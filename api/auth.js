@@ -3,7 +3,6 @@ var config  = require('./../server/config')
 var crypto  = require('crypto')
 var aes256  = require('aes256')
 var uuid    = require('node-uuid')
-var _cookie = require('cookie')
 
 var path    = config.path
 var db_path = config.db_path
@@ -37,38 +36,53 @@ exports.decrypt = decrypt
 exports.encrypt = encrypt
 exports.hash    = salthash
 
-exports.get = function(urlparams) {
+exports.get = function(urlparams,cookie) {
+  if (typeof cookie != 'undefined') {
+    var id = cookieParse(cookie).id
+  }
+  console.log('Authentication Type: Login')
   var json = JSON.parse(fs.readFileSync(db_path+'user.json','utf8'))
   var authenticated = false
   for (var i = 0; i < urlparams.length; i++) {
     var param = urlparams[i]
-    if (param.key == 'id') {
-      var id = param.value
-    }
     if (param.key == 'username') {
       var username = param.value
     }
     if (param.key == 'password') {
       var password = param.value
     }
-    if (param.key == 'cookie') {
-      var cookie = param.value
+  }
+  var auth_user
+  var test = function() {
+    var user_hash = sha512(username, decrypt(user.username_salt)).hash
+    var pass_hash = sha512(password, decrypt(user.password_salt)).hash
+    if (user_hash == user.username && pass_hash == user.password) {
+      console.log('User Login Successful, id:'+user.id)
+      auth_user = user
+      authenticated = true
     }
   }
   for (var i = 0; i < json.user.length; i++) {
     var user = json.user[i]
-    if (typeof cookie == 'undefined') {
-      var user_hash = sha512(username, decrypt(user.username_salt)).hash
-      var pass_hash = sha512(password, decrypt(user.password_salt)).hash
-      if (user_hash == user.username && pass_hash == user.password) {
-        authenticated = true
-        return {ok:true,cookie:user.cookie}
+    if (typeof id != 'undefined') {
+      if (id == user.id) {
+        test()
       }
-    } else if (_cookie.parse(cookie).key == decrypt(user.cookie.key)) {
-      authenticated = true
+    } else {
+      test()
     }
   }
-  return {ok:authenticated}
+  if (authenticated) {
+    setCookie(auth_user)
+    var cookie = decrypt(auth_user.cookie.key)
+    var id = auth_user.id
+    json = JSON.stringify(json)
+    fs.writeFile(db_path+'user.json',json,'utf8')
+    return {ok:true,cookie:cookie,id:id}
+  } else {
+    console.log('Login Authentication Failed')
+    return {ok:false}
+  }
 }
 
 exports.post = function(data,urlparams) {
@@ -82,6 +96,13 @@ exports.post = function(data,urlparams) {
   if (method == 'create') {
     var user = new User(data.user)
     user.setName(data.username)
+    for (var i = 0; i < json.user.length; i++) {
+      var user_hash = sha512(data.username, decrypt(json.user[i].username_salt)).hash
+      if (user_hash == json.user[i].username) {
+        console.log('Duplicate Username Found')
+        return {ok:false,error:'duplicate'}
+      }
+    }
     user.setPassword(data.password)
     json.user.push(user)
   }
@@ -96,6 +117,31 @@ exports.post = function(data,urlparams) {
   }
   json = JSON.stringify(json)
   fs.writeFile(db_path+'user.json',json,'utf8')
+}
+
+exports.try = function(cookie) {
+  var found = false
+  cookie = cookieParse(cookie)
+  var json = JSON.parse(fs.readFileSync(db_path+'user.json','utf8'))
+  for (var i = 0; i < json.user.length; i++) {
+    var user = json.user[i]
+    if (user.id == cookie.id) {
+      console.log('User Match, id: '+user.id)
+      found = true
+      if (decrypt(user.cookie.key) == cookie.auth) {
+        console.log('Cookie Authentication Success')
+        return true
+      } else {
+        console.log('Cookie Authentication Failure')
+      }
+    }
+  }
+  if (!found) {
+    console.log('No Matching User id')
+  } else {
+    console.log('Uncaught Authentication Error')
+  }
+  return false
 }
 
 var User = function(data) {
@@ -113,8 +159,21 @@ var User = function(data) {
     this.password = hash.hash
     this.password_salt = encrypt(hash.salt)
   }
+  setCookie(this)
+}
+
+var setCookie = function(user) {
   var string = genRandomString(64)
-  this.cookie = {
+  user.cookie = {
     key: encrypt(string)
   }
+}
+
+var cookieParse = function(str) {
+  var obj = {}
+  var arr = str.split('; ')
+  for (var i = 0; i < arr.length; i++) {
+    obj[arr[i].split('=')[0]] = arr[i].split('=')[1]
+  }
+  return obj
 }

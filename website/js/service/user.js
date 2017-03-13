@@ -9,9 +9,9 @@ app.factory('user', function($cookies,$state,$http,config){
         if (response.data.ok) {
           var date = new Date();
           date.setDate(date.getDate() + 1)
-          $cookies.put('auth',response.data.cookie.key,{expires:date})
+          $cookies.put('auth',response.data.cookie,{expires:date})
+          $cookies.put('id',response.data.id)
         }
-        console.log($cookies.getAll())
       })
     },
     create: function(username,password,data) {
@@ -28,9 +28,6 @@ app.factory('user', function($cookies,$state,$http,config){
       }).then(function(response){
         console.log(response)
       })
-    },
-    auth: function() {
-
     }
   }
 })
