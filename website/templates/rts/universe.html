@@ -1,3 +1,9 @@
-<h1>Universe {{state.params.universe_id}}</h1>
+<div class="universe-banner">
+  <h1>Universe - {{state.params.universe_id}}</h1>
+</div>
+
+<div class="universe-map">
+  <canvas id="universe" width="1920" height="1080"></canvas>
+</div>
 
 <ui-view></ui-view>

@@ -62,6 +62,8 @@ exports.get = function(urlparams,cookie) {
       authenticated = true
     }
   }
+  console.log(json)
+  console.log(cookie)
   for (var i = 0; i < json.user.length; i++) {
     var user = json.user[i]
     if (typeof id != 'undefined') {
@@ -117,6 +119,7 @@ exports.post = function(data,urlparams) {
   }
   json = JSON.stringify(json)
   fs.writeFile(db_path+'user.json',json,'utf8')
+  return {ok:true}
 }
 
 exports.try = function(cookie) {
@@ -144,6 +147,17 @@ exports.try = function(cookie) {
   return false
 }
 
+exports.returnUser = function(cookie) {
+  cookie = cookieParse(cookie)
+  var json = JSON.parse(fs.readFileSync(db_path+'user.json','utf8'))
+  for (var i = 0; i < json.user.length; i++) {
+    if (cookie.id == json.user[i].id) {
+      var user = json.user[i]
+    }
+  }
+  return user
+}
+
 var User = function(data) {
   this.id = uuid.v4();
   for (var key in data) {
@@ -159,7 +173,6 @@ var User = function(data) {
     this.password = hash.hash
     this.password_salt = encrypt(hash.salt)
   }
-  setCookie(this)
 }
 
 var setCookie = function(user) {

@@ -1,5 +1,6 @@
 app.factory('user', function($cookies,$state,$http,config){
   var host = config.host
+  var userdata = {loggedin:false}
   return {
     login: function(username,password){
       return $http({
@@ -11,6 +12,15 @@ app.factory('user', function($cookies,$state,$http,config){
           date.setDate(date.getDate() + 1)
           $cookies.put('auth',response.data.cookie,{expires:date})
           $cookies.put('id',response.data.id)
+          userdata = response.data
+          userdata.loggedin = true
+          return $http({
+            method:'get',
+            url:host+'universe'
+          }).then(function(response){
+            userdata.universes = response.data.universes
+            $state.go('rts')
+          })
         }
       })
     },
@@ -27,6 +37,19 @@ app.factory('user', function($cookies,$state,$http,config){
         json:true
       }).then(function(response){
         console.log(response)
+      })
+    },
+    get: function() {
+      return userdata
+    },
+    auth: function() {
+      return $http({
+        method:'get',
+        url:host+'user'
+      }).then(function(response){
+        userdata = response.data.user
+        userdata.loggedin = true
+        return response.data.ok
       })
     }
   }

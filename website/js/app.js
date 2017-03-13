@@ -2,6 +2,16 @@ var app = angular.module('nodeApp', [
   'ui.router','ngCookies'
 ])
 
+  .run(function($rootScope, $state, user) {
+    $rootScope.$on('$stateChangeStart', function(evt, to, toparams, fromstate, fromparams, options) {
+      if (to.name != "rts" && to.name != 'profile') {
+        if (!user.auth()) {
+          evt.preventDefault()
+        }
+      }
+    })
+  })
+
   .config(function($stateProvider, $urlRouterProvider) {
     $stateProvider
 
@@ -43,18 +53,8 @@ var app = angular.module('nodeApp', [
           controller: 'universeCtrl',
           resolve: {
             getUniverse: function($stateParams,$state,universeServe) {
-              return universeServe.get($stateParams.universe_id).then(function(response){
-                if (response.ok) {
-                  return response
-                } else {
-                  return universeServe.create().then(function(response){
-                    if (response.id == $stateParams.universe_id) {
-                      return response
-                    } else {
-                      $state.go('rts.universe',{universe_id:response.id})
-                    }
-                  })
-                }
+              return universeServe.get(+$stateParams.universe_id).then(function(response){
+                return response
               })
             }
           }
@@ -79,11 +79,11 @@ var app = angular.module('nodeApp', [
             templateUrl: 'templates/rts/region.html',
             controller: 'regionCtrl'
           })
-        .state('rts.profile', {
-          url: '/profile',
-          templateUrl: 'templates/rts/profile.html',
-          controller: 'profileCtrl'
-        })
+      .state('profile', {
+        url: '/profile',
+        templateUrl: 'templates/rts/profile.html',
+        controller: 'profileCtrl'
+      })
 
     $urlRouterProvider
       .otherwise('/main')
