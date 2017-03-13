@@ -18,6 +18,7 @@
   "homepage": "https://github.com/dylan0150/nodejs_test#readme",
   "dependencies": {
     "express": "^4.14.1",
+    "node-gyp": "3.5.0",
     "nodemon": "^1.11.0"
   }
 }
