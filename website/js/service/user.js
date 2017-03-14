@@ -5,23 +5,9 @@ app.factory('user', function($cookies,$state,$http,config){
     login: function(username,password){
       return $http({
         method:'get',
-        url:host+'auth?username='+username+'&password='+password
+        url:host+'login?username='+username+'&password='+password
       }).then(function(response){
-        if (response.data.ok) {
-          var date = new Date();
-          date.setDate(date.getDate() + 1)
-          $cookies.put('auth',response.data.cookie,{expires:date})
-          $cookies.put('id',response.data.id)
-          userdata = response.data
-          userdata.loggedin = true
-          return $http({
-            method:'get',
-            url:host+'universe'
-          }).then(function(response){
-            userdata.universes = response.data.universes
-            $state.go('rts')
-          })
-        }
+        console.log(response)
       })
     },
     create: function(username,password,data) {
@@ -30,26 +16,25 @@ app.factory('user', function($cookies,$state,$http,config){
       }
       data.username = username
       data.password = password
+      data.key = 'plsregistermekthnxbye'
       return $http({
         method:'post',
-        url:host+'auth?method=create',
+        url:host+'register',
         data:data,
         json:true
       }).then(function(response){
         console.log(response)
-      })
-    },
-    get: function() {
-      return userdata
-    },
-    auth: function() {
-      return $http({
-        method:'get',
-        url:host+'user'
-      }).then(function(response){
-        userdata = response.data.user
-        userdata.loggedin = true
-        return response.data.ok
+        if (response.data.ok) {
+          $cookies.put('key', response.data.cookie.key)
+          $cookies.put('id',  response.data.id)
+          alert('User Created Successfully')
+        } else {
+          if (response.data.duplicate) {
+            alert('Duplicate Username Exists')
+          } else {
+            alert('Incorrect Register Key')
+          }
+        }
       })
     }
   }

@@ -19,6 +19,10 @@ app.controller('rtsCtrl', function($scope,$state,user,universeServe,$timeout){
 
   $scope.selectUniverse = function() {
     var id = $scope.form.universe_form.selected_universe
-    $state.go('rts.universe',{universe_id:id})
+    if (typeof id != 'undefined') {
+      $state.go('rts.universe',{universe_id:id})
+    } else {
+      alert('Please select a universe')
+    }
   }
 })
