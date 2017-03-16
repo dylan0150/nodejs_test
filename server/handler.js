@@ -38,3 +38,7 @@ exports.register = function(request, response) {
     response.status(403).end()
   }
 }
+
+exports.auth = function(request, response) {
+  auth.accept(request,response)
+}

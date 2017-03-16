@@ -7,7 +7,8 @@ app.factory('user', function($cookies,$state,$http,config){
         method:'get',
         url:host+'login?username='+username+'&password='+password
       }).then(function(response){
-        console.log(response)
+        $cookies.put('key', response.data.cookie.key)
+        $cookies.put('id',  response.data.user.id)
         return response.data
       })
     },
@@ -24,7 +25,6 @@ app.factory('user', function($cookies,$state,$http,config){
         data:data,
         json:true
       }).then(function(response){
-        console.log(response)
         if (response.data.ok) {
           $cookies.put('key', response.data.cookie.key)
           $cookies.put('id',  response.data.id)
@@ -40,7 +40,12 @@ app.factory('user', function($cookies,$state,$http,config){
       })
     },
     cookieAuth: function() {
-      return {ok:true}
+      return $http({
+        method:'get',
+        url:host+'auth'
+      }).then(function(response){
+        return response.data.ok
+      })
     },
     userAuth: function() {
       return {ok:true}

@@ -28,6 +28,9 @@ exapp.get('/api*', function(request,response){
 exapp.post('/api*', function(request,response){
   request_handler.post(request,response)
 })
+exapp.get('/auth', function(request,response){
+  request_handler.auth(request,response)
+})
 
 //SERVER
 exapp.listen(config.host.port, function () {

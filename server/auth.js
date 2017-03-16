@@ -12,7 +12,7 @@ exports.accept = function(request,response) {
   var json = JSON.parse(fs.readFileSync(config.path.index+'server/user.json'))
   authorized = false
   for (var i = 0; i < json.users.length; i++) {
-    if (json.users[i].id == cookie.id && json.users[i].cookie.auth == cookie.auth) {
+    if (json.users[i].id == cookie.id && json.users[i].cookie.key == cookie.key) {
       authorized = true
       var user = json.users[i]
     }
@@ -73,7 +73,7 @@ exports.register = function(data) {
 }
 
 exports.parseCookie = function(cookie) {
-  cookie = cookie.split(';')
+  cookie = cookie.split('; ')
   var obj = {}
   for (var i = 0; i < cookie.length; i++) {
     obj[cookie[i].split('=')[0]] = cookie[i].split('=')[1]

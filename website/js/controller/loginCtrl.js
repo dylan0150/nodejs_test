@@ -82,7 +82,7 @@ app.controller('loginCtrl', function($scope,$state,user){
     var username = $scope.login_form[0].value
     var password = $scope.login_form[1].value
     user.login(username,password).then(function(response){
-      console.log(response)
+      $state.go('main')
     })
   }
 
@@ -91,7 +91,7 @@ app.controller('loginCtrl', function($scope,$state,user){
     var password = $scope.register_form[1].value
     var key =  $scope.register_form[2].value
     user.create(username,password,key).then(function(response){
-      console.log(response)
+      $scope.changeState('login')
     })
   }
 })
