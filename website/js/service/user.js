@@ -10,7 +10,7 @@ app.factory('user', function($cookies,$state,$http,config){
         console.log(response)
       })
     },
-    create: function(username,password,data) {
+    create: function(username,password) {
       if (typeof data == 'undefined') {
         var data = {}
       }
@@ -36,6 +36,15 @@ app.factory('user', function($cookies,$state,$http,config){
           }
         }
       })
+    },
+    cookieAuth: function() {
+      return {ok:true}
+    },
+    userAuth: function() {
+      return {ok:true}
+    },
+    update: function(data) {
+      return {ok:true}
     }
   }
 })

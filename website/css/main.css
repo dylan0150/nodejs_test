@@ -1,0 +1,16 @@
+.login .center-form {
+  margin: auto;
+  width: 450px;
+  background-color: #ffffff;
+  border-color: black;
+  border-width: medium;
+  border-radius: 15px;
+  padding: 25px;
+}
+
+.login .login_text_bar {
+  margin: auto;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  text-align: center;
+}

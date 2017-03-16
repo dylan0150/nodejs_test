@@ -1,3 +1,0 @@
-var Star = function(seed) {
-  
-}

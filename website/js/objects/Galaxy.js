@@ -1,3 +1,0 @@
-var Galaxy = function(seed) {
-  
-}

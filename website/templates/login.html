@@ -1,0 +1,29 @@
+<div class="login">
+
+  <form ng-show="form_state == 'login'" name="logForm" class="center-form" novalidate>
+
+    <dir-field ng-repeat="field in login_form" field="field"></dir-field>
+
+    <button ng-disabled="logForm.$invalid" ng-click="login()" class="btn btn-primary">Login</button>
+    <p class="login_text_bar">
+      <a href="" ng-click="changeState('register')">Click here to register</a> / <a href="" ng-click="changeState('forgotten')">Forgotten password?</a>
+    </p>
+  </form>
+
+  <form ng-show="form_state == 'register'" name="regForm" class="center-form" novalidate>
+
+    <div dir-field ng-repeat="field in register_form" field="field" class="form-control" ng-class="getClass(field)"></div>
+
+    <button ng-disabled="regForm.$invalid" ng-click="register()" class="btn btn-primary">Register</button>
+    <p class="login_text_bar">
+      <a href="" ng-click="changeState('login')">Back to Login</a>
+    </p>
+  </form>
+
+  <form ng-show="form_state == 'forgotten'" name="fgtForm" class="center-form" method="post" novalidate>
+    <p class="login_text_bar">
+      <a href="" ng-click="changeState('login')">Back to Login</a>
+    </p>
+  </form>
+
+</div>
