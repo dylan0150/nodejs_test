@@ -1,5 +1,5 @@
-var config =  require('./config')
-var auth =    require('./auth')
+var config = require('./config')
+var auth   = require('./auth')
 
 exports.get = function(request, response) {
   try {
@@ -40,5 +40,11 @@ exports.register = function(request, response) {
 }
 
 exports.auth = function(request, response) {
-  auth.accept(request,response)
+  try {
+    auth.accept(request,response)
+    response.status(200).send({ok:true}).end()
+  } catch (e) {
+    console.log(e)
+    response.status(403).end()
+  }
 }
