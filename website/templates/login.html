@@ -2,7 +2,7 @@
 
   <form ng-show="form_state == 'login'" name="logForm" class="center-form" novalidate>
 
-    <dir-field ng-repeat="field in login_form" field="field"></dir-field>
+    <dir-field ng-repeat="field in login_form" field="field" form="logForm"></dir-field>
 
     <button ng-disabled="logForm.$invalid" ng-click="login()" class="btn btn-primary">Login</button>
     <p class="login_text_bar">
@@ -12,7 +12,7 @@
 
   <form ng-show="form_state == 'register'" name="regForm" class="center-form" novalidate>
 
-    <div dir-field ng-repeat="field in register_form" field="field" class="form-control" ng-class="getClass(field)"></div>
+    <dir-field ng-repeat="field in register_form" field="field" form="regForm"></dir-field>
 
     <button ng-disabled="regForm.$invalid" ng-click="register()" class="btn btn-primary">Register</button>
     <p class="login_text_bar">

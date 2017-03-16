@@ -12,7 +12,7 @@
   type="text"
   name="{{field.name}}"
   ng-model="field.value">
-  <p class="help-block" ng-show="check(field,'help')">{{field.helptext}}</p>
+  <p class="form-text form-control-feedback" ng-show="!check(field,'help')">{{field.helptext}}</p>
 </div>
 
 <div ng-if="field.type == 'password'" class="form-group {{check(field,'group_class')}}">
@@ -29,5 +29,35 @@
   type="password"
   name="{{field.name}}"
   ng-model="field.value">
-  <p class="help-block" ng-show="check(field,'help')">{{field.helptext}}</p>
+  <p class="form-text form-control-feedback" ng-show="!check(field,'help')">{{field.helptext}}</p>
+</div>
+
+<div ng-if="field.type == 'password_validate'" class="form-group {{check(field,'group_class')}}">
+  <label for="{{field.name}}">{{field.label}}</label>
+  <input
+  ng-valid="check(field,'valid') && field.validate == field.value"
+  placeholder="{{field.placeholder}}"
+  ng-required="field.required"
+  ng-min="field.min"
+  ng-max="field.max"
+  ng-minlength="field.minlength"
+  ng-maxlength="field.maxlength"
+  class="form-control {{check(field,'class')}}"
+  type="password"
+  name="{{field.name}}"
+  ng-model="field.value">
+  <input
+  ng-valid="check(field,'valid') && field.validate == field.value"
+  placeholder="Re-enter {{field.label}}"
+  ng-required="field.required"
+  ng-min="field.min"
+  ng-max="field.max"
+  ng-minlength="field.minlength"
+  ng-maxlength="field.maxlength"
+  class="form-control {{check(field,'class')}}"
+  type="password"
+  name="{{field.name + '_validate'}}"
+  ng-model="field.validate">
+  <p class="form-text form-control-feedback" ng-show="!check(field,'help')">{{field.helptext}}</p>
+  <p class="form-text form-control-feedback" ng-show="field.validate != field.value && !form[field.name + '_validate'].$pristine">Your {{field.label}}s do not match.</p>
 </div>

@@ -3,11 +3,12 @@ app.directive('dirField', function(){
     restrict:'E',
     templateUrl:'directives/field/dirField.html',
     scope:{
-      field:'=field'
+      field:'=field',
+      form:'=form'
     },
     controller: function($scope){
       var field = $scope.field
-      field.valid = true
+      var form = $scope.form
 
       if (typeof field.helptext == 'undefined') {field.helptext = ''}
       if (typeof field.value    == 'undefined') {field.value    = ''}
@@ -41,25 +42,18 @@ app.directive('dirField', function(){
         }
       }
 
-      if (field.required && field.value == '')                            { field.valid = false; if (field.helptext != '') { field.helptext += ', ' }; field.helptext += 'Required' }
-      if (field.min != '' && field.value < field.min )                    { field.valid = false; if (field.helptext != '') { field.helptext += ', ' }; field.helptext += 'Minimum '+field.min }
-      if (field.max != '' && field.value > field.max )                    { field.valid = false; if (field.helptext != '') { field.helptext += ', ' }; field.helptext += 'Maximum '+field.max }
-      if (field.minlength != '' && field.value.length < field.minlength ) { field.valid = false; if (field.helptext != '') { field.helptext += ', ' }; field.helptext += 'Minimum Length '+field.minlength }
-      if (field.maxlength != '' && field.value.length > field.maxlength ) { field.valid = false; if (field.helptext != '') { field.helptext += ', ' }; field.helptext += 'Maximum Length '+field.maxlength }
-
-      $scope.field = field
+      if (field.required && field.value == '')                            { if (field.helptext != '') { field.helptext += ', ' }; field.helptext += 'Required' }
+      if (field.min != '' && field.value < field.min )                    { if (field.helptext != '') { field.helptext += ', ' }; field.helptext += 'Minimum '+field.min }
+      if (field.max != '' && field.value > field.max )                    { if (field.helptext != '') { field.helptext += ', ' }; field.helptext += 'Maximum '+field.max }
+      if (field.minlength != '' && field.value.length < field.minlength ) { if (field.helptext != '') { field.helptext += ', ' }; field.helptext += 'Minimum Length '+field.minlength }
+      if (field.maxlength != '' && field.value.length > field.maxlength ) { if (field.helptext != '') { field.helptext += ', ' }; field.helptext += 'Maximum Length '+field.maxlength }
 
       $scope.check = function(field, type) {
-        if (field.required && field.value == '')                              { field.valid = false }
-        if (field.min != '' && field.value < field.min )                      { field.valid = false }
-        if (field.max != '' && field.value > field.max )                      { field.valid = false }
-        if (typeof field.value != 'undefined' && field.value != undefined) {
-          if (field.minlength != '' && field.value.length < field.minlength )   { field.valid = false }
-          if (field.maxlength != '' && field.value.length > field.maxlength )   { field.valid = false }
-        }
-        if (type == 'class' && field.valid)                                   { return "form-control-danger" }
-        if (type == 'group_class' && field.valid)                             { return "has-danger" }
-        return field.valid
+        var valid = true
+        if (typeof form[field.name] != 'undefined') { valid = form[field.name].$valid || form[field.name].$pristine }
+        if (type == 'class'       && !valid) { return "form-control-danger" }
+        if (type == 'group_class' && !valid) { return "has-danger" }
+        return valid
       }
 
     }

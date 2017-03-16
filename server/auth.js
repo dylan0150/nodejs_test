@@ -43,13 +43,10 @@ exports.login = function(request,response) {
     }
   }
   if (!authorized) {
-    response.status(403).end()
+    return {ok:false}
   } else {
     fs.writeFileSync(config.path.index+'server/user.json',JSON.stringify(json))
-    return {
-      'cookie':cookie,
-      'user'  :user
-    }
+    return { cookie:cookie, user:user, ok:true }
   }
 }
 

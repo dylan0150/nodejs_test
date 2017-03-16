@@ -8,15 +8,16 @@ app.factory('user', function($cookies,$state,$http,config){
         url:host+'login?username='+username+'&password='+password
       }).then(function(response){
         console.log(response)
+        return response.data
       })
     },
-    create: function(username,password) {
+    create: function(username,password,key) {
       if (typeof data == 'undefined') {
         var data = {}
       }
       data.username = username
       data.password = password
-      data.key = 'plsregistermekthnxbye'
+      data.key = key
       return $http({
         method:'post',
         url:host+'register',
@@ -35,6 +36,7 @@ app.factory('user', function($cookies,$state,$http,config){
             alert('Incorrect Register Key')
           }
         }
+        return response.data
       })
     },
     cookieAuth: function() {
