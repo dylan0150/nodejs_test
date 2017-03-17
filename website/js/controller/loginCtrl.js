@@ -81,17 +81,17 @@ app.controller('loginCtrl', function($scope,$state,user){
   $scope.login = function() {
     var username = $scope.login_form[0].value
     var password = $scope.login_form[1].value
-    user.login(username,password).then(function(response){
-      $state.go('main')
-    })
+    user.login(username,password)
   }
 
   $scope.register = function() {
     var username = $scope.register_form[0].value
     var password = $scope.register_form[1].value
     var key =  $scope.register_form[2].value
-    user.create(username,password,key).then(function(response){
-      $scope.changeState('login')
+    user.create(username,password,key).then(function(response,username,password){
+      if (response.data.ok) {
+        user.login(username,password)
+      }
     })
   }
 })

@@ -8,6 +8,9 @@ var config  = require('./config')
 var aes_key = config.crypt.aes256
 
 exports.accept = function(request,response) {
+  if (typeof request.headers.cookie == 'undefined') {
+    return {ok:false}
+  }
   var cookie = exports.parseCookie(request.headers.cookie)
   var json = JSON.parse(fs.readFileSync(config.path.index+'server/user.json'))
   authorized = false
@@ -18,11 +21,12 @@ exports.accept = function(request,response) {
     }
   }
   if (!authorized) {
-    response.status(403).end()
+    return {ok:false}
   } else {
     return {
       'cookie':cookie,
-      'user'  :user
+      'user'  :user,
+      'ok'    :true
     }
   }
 }

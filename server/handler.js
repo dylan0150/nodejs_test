@@ -3,19 +3,29 @@ var auth   = require('./auth')
 
 exports.get = function(request, response) {
   try {
-    auth.accept(request,response)
+    var ok = auth.accept(request,response).ok
   } catch (e) {
     console.log(e)
-    response.status(403).end()
+    response.status(200).send({ok:false}).end()
+  }
+  if (!ok) {
+    response.status(200).send({ok:false}).end()
+  } else {
+    response.status(200).send({ok:true}).end()
   }
 }
 
 exports.post = function(request, response) {
   try {
-    auth.accept(request,response)
+    var ok = auth.accept(request,response).ok
   } catch (e) {
     console.log(e)
     response.status(403).end()
+  }
+  if (!ok) {
+    response.status(403).send({ok:false}).end()
+  } else {
+    response.status(200).send({ok:true}).end()
   }
 }
 
@@ -35,16 +45,21 @@ exports.register = function(request, response) {
     response.status(200).send(data).end()
   } catch (e) {
     console.log(e)
-    response.status(403).end()
+    response.status(200).send({ok:false}).end()
   }
 }
 
 exports.auth = function(request, response) {
   try {
-    auth.accept(request,response)
-    response.status(200).send({ok:true}).end()
+    var ok = auth.accept(request,response).ok
+
   } catch (e) {
     console.log(e)
-    response.status(403).end()
+    response.status(200).send({ok:false}).end()
+  }
+  if (!ok) {
+    response.status(200).send({ok:false}).end()
+  } else {
+    response.status(200).send({ok:true}).end()
   }
 }

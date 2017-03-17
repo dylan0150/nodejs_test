@@ -1,1 +1,11 @@
+<div class="main-header">
+  <h1 class="vc">Game Name</h1>
+  <h2 class="vc">Turn: {{turn}}</h2>
+  <h3 ng-repeat="stat in stats" class="vc">{{stat.label}}: {{stat.value}}</h3>
+</div>
 
+<ui-view></ui-view>
+
+<div class="main-footer">
+  <h2 class="vc"><a href="" ng-click="logout()">Log Out</a></h2>
+</div>
