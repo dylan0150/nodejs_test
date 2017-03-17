@@ -1,7 +1,8 @@
 var config = require('./config.js')
 var fs = require('fs')
 
-exports.get = function(params,body,cookie) {
+exports.get = function() {
+
   var templates = []
 
   var filter = function(path, current_path) {
