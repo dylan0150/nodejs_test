@@ -1,6 +1,7 @@
 app.controller('mainCtrl', function($scope,$state,user,info,userdata) {
 
-  console.log(userdata)
+  $scope.user = userdata
+  info.store('user',userdata)
 
   $scope.stats = [
     {

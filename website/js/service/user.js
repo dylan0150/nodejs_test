@@ -7,7 +7,6 @@ app.factory('user', function($cookies,$state,$http,config){
         method:'get',
         url:host+'login?username='+username+'&password='+password
       }).then(function(response){
-        console.log(response)
         $cookies.put('key', response.data.cookie.key)
         $cookies.put('id',  response.data.user.id)
         if (response.data.ok) {
@@ -61,7 +60,7 @@ app.factory('user', function($cookies,$state,$http,config){
         method:'get',
         url:host+'api/user?id='+id
       }).then(function(response){
-        return response.data
+        return response.data.user
       })
     }
   }

@@ -5,7 +5,6 @@ var app = angular.module('nodeApp', [
   .run(function($rootScope, $state, $http, user, template) {
     $rootScope.$on('$stateChangeStart', function(evt, to, toparams, fromstate, fromparams, options) {
       user.cookieAuth().then(function(response){
-        console.log(response)
         if (to.name == 'login' && response.ok) {$state.go('main')}
         else if (!response.ok) {$state.go('login')}
       })

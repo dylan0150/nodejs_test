@@ -6,7 +6,6 @@ app.factory('template', function($http, $templateCache, config){
       method:'get',
       url:host+'cache'
     }).then(function(response){
-      console.log(response)
       return response.data
     })
   }
