@@ -14,6 +14,7 @@ exports.setPath = function(url_path) {
     path += arr[i]
     path += '/'
   }
+  exports.path.website = path+'website/'
   exports.path.index = path
   exports.path.api = path+'server/api/'
   exports.path.db = path+'server/db/'

@@ -7,7 +7,7 @@ var config  = require('./config')
 
 var aes_key = config.crypt.aes256
 
-exports.accept = function(request,response) {
+exports.accept = function(request) {
   if (typeof request.headers.cookie == 'undefined') {
     return {ok:false}
   }
@@ -31,7 +31,7 @@ exports.accept = function(request,response) {
   }
 }
 
-exports.login = function(request,response) {
+exports.login = function(request) {
   var json = JSON.parse(fs.readFileSync(config.path.index+'server/user.json'))
   var params = exports.parseParams(request.url)
   authorized = false
@@ -67,8 +67,6 @@ exports.register = function(data) {
     var cookie = user.cookie
     var id = user.id
     json.users.push(user)
-    console.log(data)
-    console.log(cookie)
     fs.writeFileSync(config.path.index+'server/user.json',JSON.stringify(json))
     return { ok:true, cookie:cookie, id:id }
   } else {
@@ -85,10 +83,12 @@ exports.parseCookie = function(cookie) {
   return obj
 }
 exports.parseParams = function(url) {
-  var params = url.split('?')[1].split('&')
   var obj = {}
-  for (var i = 0; i < params.length; i++) {
-    obj[params[i].split('=')[0]] = params[i].split('=')[1]
+  if (url.split('?').length > 1) {
+    var params = url.split('?')[1].split('&')
+    for (var i = 0; i < params.length; i++) {
+      obj[params[i].split('=')[0]] = params[i].split('=')[1]
+    }
   }
   return obj
 }

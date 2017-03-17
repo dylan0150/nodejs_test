@@ -50,16 +50,19 @@ app.factory('user', function($cookies,$state,$http,config){
         return response.data
       })
     },
-    userAuth: function() {
-      return {ok:true}
-    },
-    update: function(data) {
-      return {ok:true}
-    },
     logout: function() {
       $cookies.remove('key')
       $cookies.remove('id')
       $state.go('login')
+    },
+    get: function() {
+      var id = $cookies.get('id')
+      return $http({
+        method:'get',
+        url:host+'api/user?id='+id
+      }).then(function(response){
+        return response.data
+      })
     }
   }
 })

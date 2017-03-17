@@ -1,4 +1,6 @@
-app.controller('mainCtrl', function($scope,$state,user,info){
+app.controller('mainCtrl', function($scope,$state,user,info,userdata) {
+
+  console.log(userdata)
 
   $scope.stats = [
     {
@@ -13,6 +15,16 @@ app.controller('mainCtrl', function($scope,$state,user,info){
       label:'Example',
       value:76
     },
+  ]
+
+  $scope.saves = [
+    {
+      time: 3,
+      created: new Date(Date.now()),
+      universe: {
+        name: 'test'
+      }
+    }
   ]
 
   $scope.turn = 0

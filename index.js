@@ -16,20 +16,25 @@ exapp.use(express.static('website'))
 exapp.use(bodyParser.json())
 
 //API
+
+exapp.get('/auth', function(request,response){
+  request_handler.auth(request,response)
+})
+exapp.get('/cache', function(request,response){
+  response.status(200).send(require('./server/cache').get()).end()
+})
 exapp.get('/login*', function(request,response){
   request_handler.login(request,response)
 })
 exapp.post('/register*', function(request,response){
   request_handler.register(request,response)
 })
+
 exapp.get('/api*', function(request,response){
   request_handler.get(request,response)
 })
 exapp.post('/api*', function(request,response){
   request_handler.post(request,response)
-})
-exapp.get('/auth', function(request,response){
-  request_handler.auth(request,response)
 })
 
 //SERVER

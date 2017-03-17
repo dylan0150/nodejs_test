@@ -11,7 +11,14 @@ exports.get = function(request, response) {
   if (!ok) {
     response.status(200).send({ok:false}).end()
   } else {
-    response.status(200).send({ok:true}).end()
+    try {
+      var params = auth.parseParams(request.url)
+      var cookie = auth.parseCookie(request.headers.cookie)
+      var res = require('.'+request.url.split('?')[0]).get(params,request.body,cookie)
+      response.status(200).send(res).end()
+    } catch (e) {
+      response.status(404).end()
+    }
   }
 }
 
@@ -25,7 +32,14 @@ exports.post = function(request, response) {
   if (!ok) {
     response.status(403).send({ok:false}).end()
   } else {
-    response.status(200).send({ok:true}).end()
+    try {
+      var params = auth.parseParams(request.url)
+      var cookie = auth.parseCookie(request.headers.cookie)
+      var res = require('.'+request.url.split('?')[0]).post(params,request.body,cookie)
+      response.status(200).send(res).end()
+    } catch (e) {
+      response.status(404).end()
+    }
   }
 }
 
