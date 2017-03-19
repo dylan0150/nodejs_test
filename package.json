@@ -17,6 +17,8 @@
   },
   "homepage": "https://github.com/dylan0150/nodejs_test#readme",
   "dependencies": {
+    "aes256": "^1.0.2",
+    "body-parser": "^1.17.1",
     "express": "^4.14.1",
     "node-gyp": "3.5.0",
     "nodemon": "^1.11.0"
