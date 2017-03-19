@@ -88,10 +88,6 @@ app.controller('loginCtrl', function($scope,$state,user){
     var username = $scope.register_form[0].value
     var password = $scope.register_form[1].value
     var key =  $scope.register_form[2].value
-    user.create(username,password,key).then(function(response,username,password){
-      if (response.data.ok) {
-        user.login(username,password)
-      }
-    })
+    user.create(username,password,key)
   }
 })

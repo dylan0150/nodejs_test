@@ -31,6 +31,7 @@ app.factory('user', function($cookies,$state,$http,config){
           $cookies.put('key', response.data.cookie.key)
           $cookies.put('id',  response.data.id)
           alert('User Created Successfully')
+          $state.go('main')
         } else {
           if (response.data.duplicate) {
             alert('Duplicate Username Exists')
@@ -60,7 +61,12 @@ app.factory('user', function($cookies,$state,$http,config){
         method:'get',
         url:host+'api/user?id='+id
       }).then(function(response){
-        return response.data.user
+        var user = response.data.user
+        for (var i = 0; i < user.universes.length; i++) {
+          var u = user.universes[i].universe
+          u.created = new Date(u.created)
+        }
+        return user
       })
     }
   }

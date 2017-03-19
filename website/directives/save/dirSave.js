@@ -7,7 +7,7 @@ app.directive('dirSave', function(){
       index:'=index'
     },
     controller: function($scope){
-      $scope.universe = $scope.save.universe
+
     }
   }
 })

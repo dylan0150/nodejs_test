@@ -1,7 +1,7 @@
-app.controller('mainCtrl', function($scope,$state,user,info,userdata) {
+app.controller('mainCtrl', function($scope,$state,user,info,userdata,universe) {
 
   $scope.user = userdata
-  info.store('user',userdata)
+  $scope.saves = userdata.universes
 
   $scope.stats = [
     {
@@ -18,19 +18,16 @@ app.controller('mainCtrl', function($scope,$state,user,info,userdata) {
     },
   ]
 
-  $scope.saves = [
-    {
-      time: 3,
-      created: new Date(Date.now()),
-      universe: {
-        name: 'test'
-      }
-    }
-  ]
-
   $scope.turn = 0
 
   $scope.logout = function() {
     user.logout()
+  }
+
+  $scope.createUniverse = function() {
+    var name = prompt('Name of your universe?')
+    universe.create(name).then(function(response){
+      $scope.saves.push({universe:response})
+    })
   }
 })
