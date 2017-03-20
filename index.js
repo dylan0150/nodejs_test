@@ -1,7 +1,7 @@
 //REQUIRES
 var express         = require('express')
 var config          = require('./server/config')
-var auth          = require('./server/auth')
+var auth            = require('./server/auth')
 var request_handler = require('./server/handler')
 var bodyParser      = require('body-parser')
 
