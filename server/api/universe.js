@@ -1,8 +1,9 @@
-var config = require('./../config')
-var uuid   = require('node-uuid')
+var config  = require('./../config')
+var utils    = require('./../utils')
+var uuid    = require('node-uuid')
 
 exports.get = function(params,data,cookie) {
-  var json = config.readJSON('universe')
+  var json = utils.readJSON('universe')
   for (var i = 0; i < json.universes.length; i++) {
     var u = json.universes[i]
     if (u.id == params.id && u.user_id == cookie.id) {
@@ -13,7 +14,7 @@ exports.get = function(params,data,cookie) {
 }
 
 exports.post = function(params,data,cookie) {
-  var json = config.readJSON('universe')
+  var json = utils.readJSON('universe')
   if (typeof params.id != 'undefined') {
     for (var i = 0; i < json.universes.length; i++) {
       if (json.universes[i].id == params.id && json.universes[i].user_id == cookie.id) {
@@ -29,7 +30,7 @@ exports.post = function(params,data,cookie) {
       id: _uuid,
       data: data
     })
-    config.writeJSON('universe',json)
+    utils.writeJSON('universe',json)
     return {ok:true, id:_uuid}
   }
   return {ok:false}

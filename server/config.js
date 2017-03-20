@@ -1,5 +1,3 @@
-var fs = require('fs')
-
 exports.host = {
   port:8080,
   name:"localhost"
@@ -29,15 +27,6 @@ exports.path = {
 
 exports.crypt = {
   aes256: "£$%^&%*$£%^^%&$^765476924567352^&%^&bhusdfbjhFTYFVTYHJ7h8sdhf8ysdfhn789N^&BN^&BN^NM&*N^&nm8NM89na9sd^&%*8787n78n*NM&*9ntsdf8nm98dsfn89*&n789nmasfdyn9fds8&*87*&8676*&^8*&%^$9sf7d89nm98s"
-}
-
-exports.readJSON = function(name){
-  var data = fs.readFileSync(exports.path.db+name+'.json')
-  return JSON.parse(data)
-}
-
-exports.writeJSON = function(name,json){
-  fs.writeFileSync(exports.path.db+name+'.json',JSON.stringify(json))
 }
 
 exports.error = function(code, error, request, response) {

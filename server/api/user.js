@@ -1,5 +1,6 @@
 var fs = require('fs')
 var config = require('./../config')
+var utils  = require('./../utils')
 
 exports.get = function(params,data,cookie) {
   var json = JSON.parse(fs.readFileSync(config.path.index+'server/user.json'))
@@ -11,7 +12,7 @@ exports.get = function(params,data,cookie) {
     }
   }
   data.universes = []
-  json = config.readJSON('universe')
+  json = utils.readJSON('universe')
   for (var i = 0; i < json.universes.length; i++) {
     var u = json.universes[i]
     if (u.user_id == cookie.id) {
