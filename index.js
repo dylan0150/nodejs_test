@@ -14,9 +14,13 @@ config.setPath(process.argv[1])
 //WEBSITE
 exapp.use(express.static('website'))
 exapp.use(bodyParser.json())
+exapp.use(function(req,res,next){
+  
+  next()
+})
 
 //API
-
+config.setPath(process.argv[1])
 exapp.get('/auth', function(request,response){
   request_handler.auth(request,response)
 })
