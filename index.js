@@ -1,9 +1,11 @@
 //REQUIRES
 var express         = require('express')
+var bodyParser      = require('body-parser')
+
 var config          = require('./server/config')
 var auth            = require('./server/auth')
 var request_handler = require('./server/handler')
-var bodyParser      = require('body-parser')
+var mailer          = require('./server/mailer')
 
 //VARIABLES
 var exapp           = express()
@@ -15,7 +17,7 @@ config.setPath(process.argv[1])
 exapp.use(express.static('website'))
 exapp.use(bodyParser.json())
 exapp.use(function(req,res,next){
-  
+
   next()
 })
 
