@@ -68,9 +68,7 @@ app.controller('loginCtrl', function($scope,$state,user){
   }
 
   $scope.checkPassValid = function(name) {
-    if (name == 'password'
-    && $scope.reg.password == $scope.reg.password
-    ) {
+    if (name == 'password' && $scope.reg.password == $scope.reg.password) {
       return 'has-danger'
     }
     if (name == 'password_2') {

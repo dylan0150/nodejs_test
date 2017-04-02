@@ -56,7 +56,7 @@ exports.login = function(request) {
 
 exports.register = function(data) {
   var json = JSON.parse(fs.readFileSync(config.path.index+'server/user.json'))
-  if (json.register_key == data.key) {
+  if (config.register_key == data.key) {
     for (var i = 0; i < json.users.length; i++) {
       if (json.users[i].username == data.username) {
         return { ok:false, duplicate:true }

@@ -7,10 +7,12 @@ app.factory('user', function($cookies,$state,$http,config){
         method:'get',
         url:host+'login?username='+username+'&password='+password
       }).then(function(response){
-        $cookies.put('key', response.data.cookie.key)
-        $cookies.put('id',  response.data.user.id)
         if (response.data.ok) {
           $state.go('main')
+          $cookies.put('key', response.data.cookie.key)
+          $cookies.put('id',  response.data.user.id)
+        } else {
+          alert('Details not recognised')
         }
       })
     },
@@ -62,10 +64,7 @@ app.factory('user', function($cookies,$state,$http,config){
         url:host+'api/user?id='+id
       }).then(function(response){
         var user = response.data.user
-        for (var i = 0; i < user.universes.length; i++) {
-          var u = user.universes[i].universe
-          u.created = new Date(u.created)
-        }
+        console.log(user)
         return user
       })
     }
