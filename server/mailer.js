@@ -1,5 +1,7 @@
 var nodemailer      = require('nodemailer')
 var wellknown       = require('nodemailer-wellknown')
+var secure          = require('./../secure')
+
 var can_reply       = 'Game Server <dylan_gameserver@yahoo.com>'
 var noreply         = 'No Reply <donotreply@dylan_server.com>'
 
@@ -9,8 +11,8 @@ var transporter = nodemailer.createTransport({
   port:   yahoo.port,
   secure: yahoo.secure,
   auth: {
-    user: 'dylan_gameserver@yahoo.com',
-    pass: ''
+    user: secure.get('email_username'),
+    pass: secure.get('email_password')
   }
 })
 

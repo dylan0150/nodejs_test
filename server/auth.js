@@ -3,9 +3,10 @@ var crypto  = require('crypto')
 var uuid    = require('node-uuid')
 var fs      = require('fs')
 
+var secure  = require('./../secure')
 var config  = require('./config')
 
-var aes_key = config.crypt.aes256
+var aes_key = secure.get('aes256')
 
 exports.accept = function(request) {
   if (typeof request.headers.cookie == 'undefined') {
@@ -56,7 +57,8 @@ exports.login = function(request) {
 
 exports.register = function(data) {
   var json = JSON.parse(fs.readFileSync(config.path.index+'server/user.json'))
-  if (config.register_key == data.key) {
+  var reg_key = secure.get('register_key')
+  if (reg_key == data.key) {
     for (var i = 0; i < json.users.length; i++) {
       if (json.users[i].username == data.username) {
         return { ok:false, duplicate:true }
