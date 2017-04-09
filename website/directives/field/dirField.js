@@ -7,6 +7,7 @@ app.directive('dirField', function(){
       form:'=form'
     },
     controller: function($scope){
+
       var field = $scope.field
       var form = $scope.form
 
@@ -42,11 +43,13 @@ app.directive('dirField', function(){
         }
       }
 
-      if (field.required && field.value == '')                            { if (field.helptext != '') { field.helptext += ', ' }; field.helptext += 'Required' }
-      if (field.min != '' && field.value < field.min )                    { if (field.helptext != '') { field.helptext += ', ' }; field.helptext += 'Minimum '+field.min }
-      if (field.max != '' && field.value > field.max )                    { if (field.helptext != '') { field.helptext += ', ' }; field.helptext += 'Maximum '+field.max }
-      if (field.minlength != '' && field.value.length < field.minlength ) { if (field.helptext != '') { field.helptext += ', ' }; field.helptext += 'Minimum Length '+field.minlength }
-      if (field.maxlength != '' && field.value.length > field.maxlength ) { if (field.helptext != '') { field.helptext += ', ' }; field.helptext += 'Maximum Length '+field.maxlength }
+      if (field.helptext == '') {
+        if (field.required && field.value == '')                            { if (field.helptext != '') { field.helptext += ', ' }; field.helptext += 'Required' }
+        if (field.min != '' && field.value < field.min )                    { if (field.helptext != '') { field.helptext += ', ' }; field.helptext += 'Minimum '+field.min }
+        if (field.max != '' && field.value > field.max )                    { if (field.helptext != '') { field.helptext += ', ' }; field.helptext += 'Maximum '+field.max }
+        if (field.minlength != '' && field.value.length < field.minlength ) { if (field.helptext != '') { field.helptext += ', ' }; field.helptext += 'Minimum Length '+field.minlength }
+        if (field.maxlength != '' && field.value.length > field.maxlength ) { if (field.helptext != '') { field.helptext += ', ' }; field.helptext += 'Maximum Length '+field.maxlength }
+      }
 
       $scope.check = function(field, type) {
         var valid = true

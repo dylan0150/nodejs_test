@@ -1,6 +1,8 @@
 app.factory('user', function($cookies,$state,$http,config){
-  var host = config.host
-  var userdata = {loggedin:false}
+
+  var host      = config.host
+  var userdata  = { loggedin:false }
+
   return {
     login: function(username,password){
       return $http({
@@ -16,19 +18,19 @@ app.factory('user', function($cookies,$state,$http,config){
         }
       })
     },
-    create: function(username,password,key) {
-      if (typeof data == 'undefined') {
-        var data = {}
+    create: function(username, password, email) {
+      var data = {
+        username: username,
+        password: password,
+        email: email
       }
-      data.username = username
-      data.password = password
-      data.key = key
       return $http({
         method:'post',
         url:host+'register',
         data:data,
         json:true
       }).then(function(response){
+        console.log(response)
         if (response.data.ok) {
           $cookies.put('key', response.data.cookie.key)
           $cookies.put('id',  response.data.id)

@@ -38,6 +38,17 @@ app.controller('loginCtrl', function($scope,$state,user){
       required:true
     },
     {
+      label:'Email',
+      name:'email',
+      placeholder:'example@something.com',
+      type:'email',
+      minlength:3,
+      maxlength:'',
+      min:'',
+      max:'',
+      required:true
+    },
+    {
       label:'Password',
       name:'password',
       placeholder:'New Password',
@@ -47,24 +58,30 @@ app.controller('loginCtrl', function($scope,$state,user){
       min:'',
       max:'',
       required:true
-    },
-    {
-      label:'Key',
-      name:'key',
-      placeholder:'####-####-####-####',
-      type:'text',
-      minlength:19,
-      maxlength:19,
-      min:'',
-      max:'',
-      required:true
     }
   ]
 
   $scope.form_state = 'login'
 
+  var keyfound = false
   $scope.changeState = function(state) {
     $scope.form_state = state
+    if (!keyfound) {
+      var keys = document.getElementsByClassName('field-key')
+      if (keys.length > 0) keyfound = true;
+      for (var k = 0; k < keys.length; k++) {
+        keys[k].addEventListener('input', function(e){
+          var val = e.target.value.replace(/ - /g,'')
+          var len = Math.min(val.length,16)
+          var str = ''
+          for (var i = 0; i < len; i++) {
+            str += val.charAt(i)
+            if ( (i+1) % 4 == 0 && i < 15 && len > i+1 ) { str += ' - '; }
+          }
+          e.target.value = str
+        })
+      }
+    }
   }
 
   $scope.checkPassValid = function(name) {
@@ -84,8 +101,8 @@ app.controller('loginCtrl', function($scope,$state,user){
 
   $scope.register = function() {
     var username = $scope.register_form[0].value
-    var password = $scope.register_form[1].value
-    var key =  $scope.register_form[2].value
-    user.create(username,password,key)
+    var email =  $scope.register_form[1].value
+    var password = $scope.register_form[2].value
+    user.create(username,password,email)
   }
 })

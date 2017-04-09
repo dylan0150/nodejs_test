@@ -15,6 +15,23 @@
   <p class="form-text form-control-feedback" ng-show="!check(field,'help')">{{field.helptext}}</p>
 </div>
 
+<div ng-if="field.type == 'email'" class="form-group {{check(field,'group_class')}}">
+  <label for="{{field.name}}">{{field.label}}</label>
+  <input
+  ng-valid="check(field,'valid')"
+  placeholder="{{field.placeholder}}"
+  ng-required="field.required"
+  ng-min="field.min"
+  ng-max="field.max"
+  ng-minlength="field.minlength"
+  ng-maxlength="field.maxlength"
+  class="form-control {{check(field,'class')}}"
+  type="email"
+  name="{{field.name}}"
+  ng-model="field.value">
+  <p class="form-text form-control-feedback" ng-show="!check(field,'help')">{{field.helptext}}</p>
+</div>
+
 <div ng-if="field.type == 'password'" class="form-group {{check(field,'group_class')}}">
   <label for="{{field.name}}">{{field.label}}</label>
   <input
@@ -27,6 +44,23 @@
   ng-maxlength="field.maxlength"
   class="form-control {{check(field,'class')}}"
   type="password"
+  name="{{field.name}}"
+  ng-model="field.value">
+  <p class="form-text form-control-feedback" ng-show="!check(field,'help')">{{field.helptext}}</p>
+</div>
+
+<div ng-if="field.type == 'key'" class="form-group {{check(field,'group_class')}}">
+  <label for="{{field.name}}">{{field.label}}</label>
+  <input
+  ng-valid="check(field,'valid')"
+  placeholder="{{field.placeholder}}"
+  ng-required="field.required"
+  ng-min="field.min"
+  ng-max="field.max"
+  ng-minlength="field.minlength"
+  ng-maxlength="field.maxlength"
+  class="form-control {{check(field,'class')}} field-key"
+  type="text"
   name="{{field.name}}"
   ng-model="field.value">
   <p class="form-text form-control-feedback" ng-show="!check(field,'help')">{{field.helptext}}</p>
