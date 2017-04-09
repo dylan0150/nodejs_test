@@ -56,22 +56,23 @@ exports.login = function(request) {
 
 exports.register = function(data) {
   var json = JSON.parse(fs.readFileSync(config.path.index+'server/user.json'))
-  if (config.register_key == data.key) {
-    for (var i = 0; i < json.users.length; i++) {
-      if (json.users[i].username == data.username) {
-        return { ok:false, duplicate:true }
-      }
+  for (var i = 0; i < json.users.length; i++) {
+    if (json.users[i].email == data.email) {
+      console.log( 'Duplicate email clash for ' + data.email )
+      console.log( 'Email validated: ' + json.users[i].validated )
+      return { ok:false, err:4030, errmsg:'Duplicate Email' }
     }
-    delete data.key
-    var user = new User(data)
-    var cookie = user.cookie
-    var id = user.id
-    json.users.push(user)
-    fs.writeFileSync(config.path.index+'server/user.json',JSON.stringify(json))
-    return { ok:true, cookie:cookie, id:id }
-  } else {
-    return { ok:false, duplicate:false }
+    if (json.users[i].username == data.username) {
+      return { ok:false, err:4031, errmsg:'Duplicate Username' }
+    }
   }
+  delete data.key
+  var user = new User(data)
+  var cookie = user.cookie
+  var id = user.id
+  json.users.push(user)
+  fs.writeFileSync(config.path.index+'server/user.json',JSON.stringify(json))
+  return { ok:true, cookie:cookie, id:id }
 }
 
 exports.parseCookie = function(cookie) {
@@ -130,6 +131,7 @@ var User = function(data) {
   this.username = data.username
   this.password = pass.hash
   this.salt = exports.encrypt(pass.salt)
+  this.validated = false
   delete data.username
   delete data.password
   this.id   = uuid.v1()+'-'+uuid.v4()
