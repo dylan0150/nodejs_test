@@ -15,12 +15,12 @@ var templates = []
 for (var i = 0; i < data.length; i++) {
   var n = data[i].split('.')
   if (n[n.length - 1] == 'html') {
-    for (var i = 0; i < meta.length; i++) {
-      if (meta[i].name == n[0]) {
+    for (var j = 0; j < meta.length; j++) {
+      if (meta[j].name == n[0]) {
         templates.push({
           name: n[0],
-          from: meta[i].from,
-          subject: meta[i].subject
+          from: meta[j].from,
+          subject: meta[j].subject
         })
       }
     }
@@ -70,13 +70,11 @@ exports.send = function(type, to, params) {
       }
     }
   }
-  
+
   console.log(options)
   if (false) { //TODO: if(valid) - When ready for live emailing.
     transporter.sendMail(options, function(error, info, response) {
-      if (error) {
-        console.log(error)
-      }
+      if (error) console.log(error);
       console.log(info)
       console.log(response)
     })
@@ -88,5 +86,3 @@ exports.send = function(type, to, params) {
 
   return { ok:true }
 }
-
-exports.send('register','dylan.hanner@yahoo.co.uk',{})

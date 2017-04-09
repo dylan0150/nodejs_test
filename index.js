@@ -18,43 +18,46 @@ config.path = {
   db      : path+'server/db/',
   mail    : path+'server/mailtemplates/'
 }
-secure.path = config.path.index
+secure.path = path
+secure.setUp(function(){
 
-var auth            = require('./server/auth')
-var request_handler = require('./server/handler')
-var mailer          = require('./server/mailer')
-var exapp           = express()
+  var auth            = require('./server/auth')
+  var request_handler = require('./server/handler')
+  var mailer          = require('./server/mailer')
+  var exapp           = express()
 
-//WEBSITE
-exapp.use(express.static('website'))
-exapp.use(bodyParser.json())
-exapp.use(function(req,res,next){
+  //WEBSITE
+  exapp.use(express.static('website'))
+  exapp.use(bodyParser.json())
+  exapp.use(function(req,res,next){
 
-  next()
-})
+    next()
+  })
 
-//API
-exapp.get('/auth', function(request,response){
-  request_handler.auth(request,response)
-})
-exapp.get('/cache', function(request,response){
-  response.status(200).send(require('./server/cache').get()).end()
-})
-exapp.get('/login*', function(request,response){
-  request_handler.login(request,response)
-})
-exapp.post('/register*', function(request,response){
-  request_handler.register(request,response)
-})
+  //API
+  exapp.get('/auth', function(request,response){
+    request_handler.auth(request,response)
+  })
+  exapp.get('/cache', function(request,response){
+    response.status(200).send(require('./server/cache').get()).end()
+  })
+  exapp.get('/login*', function(request,response){
+    request_handler.login(request,response)
+  })
+  exapp.post('/register*', function(request,response){
+    request_handler.register(request,response)
+  })
 
-exapp.get('/api*', function(request,response){
-  request_handler.get(request,response)
-})
-exapp.post('/api*', function(request,response){
-  request_handler.post(request,response)
-})
+  exapp.get('/api*', function(request,response){
+    request_handler.get(request,response)
+  })
+  exapp.post('/api*', function(request,response){
+    request_handler.post(request,response)
+  })
 
-//SERVER
-exapp.listen(config.host.port, function () {
-  console.log('HOSTNAME:'+config.host.name+', listening on PORT:'+config.host.port)
+  //SERVER
+  exapp.listen(config.host.port, function () {
+    console.log('HOSTNAME:'+config.host.name+', listening on PORT:'+config.host.port)
+  })
+
 })
