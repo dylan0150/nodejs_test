@@ -16,6 +16,8 @@ exports.set = function(key, value) {
   fs.writeFileSync(exports.path + 'secure.json', JSON.stringify(json))
 }
 
+exports.key = aesKey
+
 if (process.argv.length > 2) {
   exports.set(process.argv[2], process.argv[3])
   console.log('DONE')
