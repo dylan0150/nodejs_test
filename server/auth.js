@@ -3,13 +3,19 @@ var crypto  = require('crypto')
 var uuid    = require('node-uuid')
 var fs      = require('fs')
 
+var secure  = require('./../secure')
 var config  = require('./config')
 
-var aes_key = config.crypt.aes256
+try {
+  var aes_key = secure.key
+} catch (e) {
+  console.log('Error: no aes256 key found, please run "node secure.js [aes256] [value]"')
+  throw e;
+}
 
 exports.accept = function(request) {
   if (typeof request.headers.cookie == 'undefined') {
-    return {ok:false}
+    return {ok:false, err:4032, errmsg:'No Cookie Found'}
   }
   var cookie = exports.parseCookie(request.headers.cookie)
   var json = JSON.parse(fs.readFileSync(config.path.index+'server/user.json'))
@@ -21,12 +27,12 @@ exports.accept = function(request) {
     }
   }
   if (!authorized) {
-    return {ok:false}
+    return { ok:false, err:4034, errmsg:'Invalid/Expired Cookie' }
   } else {
     return {
-      'cookie':cookie,
-      'user'  :user,
-      'ok'    :true
+      cookie:cookie,
+      user  :user,
+      ok    :true
     }
   }
 }
@@ -47,7 +53,7 @@ exports.login = function(request) {
     }
   }
   if (!authorized) {
-    return {ok:false}
+    return { ok:false, err:4033, errmsg:'Invalid Login Credentials' }
   } else {
     fs.writeFileSync(config.path.index+'server/user.json',JSON.stringify(json))
     return { cookie:cookie, user:user, ok:true }
@@ -62,11 +68,9 @@ exports.register = function(data) {
       console.log( 'Email validated: ' + json.users[i].validated )
       return { ok:false, err:4030, errmsg:'Duplicate Email' }
     }
-    if (json.users[i].username == data.username) {
-      return { ok:false, err:4031, errmsg:'Duplicate Username' }
-    }
+    if (json.users[i].username == data.username) return { ok:false, err:4031, errmsg:'Duplicate Username' };
   }
-  delete data.key
+  if (!validateEmail(data.email)) return {ok: false, err:4035, errmsg:'Invalid Email'};
   var user = new User(data)
   var cookie = user.cookie
   var id = user.id
@@ -137,4 +141,9 @@ var User = function(data) {
   this.id   = uuid.v1()+'-'+uuid.v4()
   this.data = data
   setCookie(this)
+}
+
+var validateEmail = function(email) {
+  console.log('Email validation for ' + email)
+  return false;
 }

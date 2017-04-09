@@ -1,17 +1,29 @@
-//REQUIRES
+//SETUP
+var fs              = require('fs')
 var express         = require('express')
 var bodyParser      = require('body-parser')
-
 var config          = require('./server/config')
+var secure          = require('./secure')
+
+var arr = process.argv[1].split('/')
+var path = ""
+for (var i = 0; i < arr.length-1; i++) {
+  path += arr[i]
+  path += '/'
+}
+config.path = {
+  website : path+'website/',
+  index   : path,
+  api     : path+'server/api/',
+  db      : path+'server/db/',
+  mail    : path+'server/mailtemplates/'
+}
+secure.path = config.path.index
+
 var auth            = require('./server/auth')
 var request_handler = require('./server/handler')
 var mailer          = require('./server/mailer')
-
-//VARIABLES
 var exapp           = express()
-
-//SETUP
-config.setPath(process.argv[1])
 
 //WEBSITE
 exapp.use(express.static('website'))
@@ -22,7 +34,6 @@ exapp.use(function(req,res,next){
 })
 
 //API
-config.setPath(process.argv[1])
 exapp.get('/auth', function(request,response){
   request_handler.auth(request,response)
 })

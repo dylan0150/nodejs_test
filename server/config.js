@@ -25,10 +25,6 @@ exports.path = {
   db:'db'
 }
 
-exports.crypt = {
-  aes256: "£$%^&%*$£%^^%&$^765476924567352^&%^&bhusdfbjhFTYFVTYHJ7h8sdhf8ysdfhn789N^&BN^&BN^NM&*N^&nm8NM89na9sd^&%*8787n78n*NM&*9ntsdf8nm98dsfn89*&n789nmasfdyn9fds8&*87*&8676*&^8*&%^$9sf7d89nm98s"
-}
-
 exports.error = function(code, error, request, response) {
   console.log('Error:'+code)
   console.log(new Error(error).stack)

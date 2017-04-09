@@ -1,0 +1,17 @@
+[
+  {
+    "name":"register",
+    "from":"Server <donotreply@dylan_gameserver.com>",
+    "subject":"Account Created"
+  },
+  {
+    "name":"password-reset",
+    "from":"Server <donotreply@dylan_gameserver.com>",
+    "subject":"Password Reset"
+  },
+  {
+    "name":"email-validate",
+    "from":"Server <donotreply@dylan_gameserver.com>",
+    "subject":"Email Activation"
+  }
+]
