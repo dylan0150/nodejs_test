@@ -4,6 +4,8 @@ var express         = require('express')
 var bodyParser      = require('body-parser')
 var config          = require('./server/config')
 var secure          = require('./secure')
+var rls             = require('readline-sync')
+var readline        = require('readline')
 
 var arr = process.argv[1].split('/')
 var path = ""
@@ -59,7 +61,34 @@ exapp.post('/api*', function(request,response){
   request_handler.post(request,response)
 })
 
+var commands = [
+  {
+    key:'kill',
+    name:'instantly kill the server',
+    call:function(){ throw new Error('kill'); }
+  }
+]
+
 //SERVER
 exapp.listen(config.host.port, function () {
   console.log('HOSTNAME:'+config.host.name+', listening on PORT:'+config.host.port)
+  console.log('Server Running')
+  console.log(' --- Commands:')
+  for (var i = 0; i < commands.length; i++) {
+    console.log(commands[i].key+': '+commands[i].name)
+  }
+  var input = readline.createInterface({
+    input:process.stdin,
+    output:process.stdout
+  })
+  input.prompt()
+  process.stdin.setEncoding('utf8');
+  process.stdin.on('data',function(data){
+    for (var i = 0; i < commands.length; i++) {
+      if (commands[i].key == data.trim()+"") {
+        commands[i].call()
+      }
+    }
+    input.prompt()
+  })
 })
