@@ -2,11 +2,11 @@ var aesKey = ""
 
 var aes = require('aes256')
 var fs = require('fs')
-var readline = require('readline')
+var rls = require('readline-sync')
 
 exports.path = process.argv[1].split('secure.js')[0]
 
-exports.setUp = function(callback) {
+exports.setUp = function() {
   var change = false
   try {
     var json = JSON.parse(fs.readFileSync(exports.path + 'secure.json'))
@@ -15,46 +15,23 @@ exports.setUp = function(callback) {
     change = true
     var json = {}
   }
-  var input = readline.createInterface({
-    input: process.stdin,
-    output: process.stdout
-  });
-  var getAes = function(callback) {
-    if (typeof json.aes256 == 'undefined') {
-      input.question('Please Enter an aes256 key',function(res){
-        change = true
-        json.aes256 = aesKey = res
-        getEmail(callback)
-      })
-    } else {
-      aesKey = json.aes256
-      getEmail(callback)
-    }
-  }
-  var getEmail = function(callback) {
-    if (typeof json.email_username == 'undefined') {
-      input.question('Please enter your email username',function(res){
-        change = true
-        json.email_username = aes.encrypt(aesKey, res)
-        getPass(callback)
-      })
-    } else {
-      getPass(callback)
-    }
-  }
-  var getPass = function(callback) {
-    if (typeof json.email_password == 'undefined') {
-      input.question('Please enter your email password',function(res){
-        change = true
-        json.email_password = aes.encrypt(aesKey, res)
-        if (change) fs.writeFileSync(exports.path + 'secure.json', JSON.stringify(json));
-        callback()
-      })
-    } else {
-      callback()
-    }
-  }
-  getAes(callback)
+  if (typeof json.aes256 == 'undefined') {
+    json.aes256 = rls.question('Please enter an aes256 encryption key\n> ', { hideEchoBack: true })
+    change = true
+  } else { console.log('aes256 key found') }
+  aesKey = json.aes256
+  if (typeof json.email_username == 'undefined') {
+    var res = rls.question('Please enter your email username\n> ', { hideEchoBack: false })
+    change = true
+    json.email_username = aes.encrypt(aesKey, res)
+  } else { console.log('email username found') }
+  if (typeof json.email_password == 'undefined') {
+    var res = rls.question('Please enter your email password\n> ', { hideEchoBack: true })
+    change = true
+    json.email_password = aes.encrypt(aesKey, res)
+  } else { console.log('email password found') }
+  if (change) fs.writeFileSync(exports.path + 'secure.json', JSON.stringify(json));
+  return true;
 }
 
 exports.get = function(key) {
