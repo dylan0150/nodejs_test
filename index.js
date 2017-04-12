@@ -61,34 +61,41 @@ exapp.post('/api*', function(request,response){
   request_handler.post(request,response)
 })
 
-var commands = [
-  {
-    key:'kill',
-    name:'instantly kill the server',
-    call:function(){ throw new Error('kill'); }
+var commands = {
+  err: function(msg) {
+    ///DESC Throw a new error and crash///DESC
+    console.log('exit');
+    throw new Error('Forced error');
+    return true;
+  },
+  cmd: function() {
+    ///DESC Prints all available commands///DESC
+    console.log(' --- Commands:')
+    for (var key in commands) {
+      console.log(key+" --"+commands[key].toString().split('///DESC')[1])
+    }
+    return true;
   }
-]
+}
 
 //SERVER
 exapp.listen(config.host.port, function () {
   console.log('HOSTNAME:'+config.host.name+', listening on PORT:'+config.host.port)
   console.log('Server Running')
-  console.log(' --- Commands:')
-  for (var i = 0; i < commands.length; i++) {
-    console.log(commands[i].key+': '+commands[i].name)
-  }
-  var input = readline.createInterface({
-    input:process.stdin,
-    output:process.stdout
-  })
-  input.prompt()
-  process.stdin.setEncoding('utf8');
-  process.stdin.on('data',function(data){
-    for (var i = 0; i < commands.length; i++) {
-      if (commands[i].key == data.trim()+"") {
-        commands[i].call()
-      }
+  commands.cmd()
+  process.stdin.setEncoding('UTF-8')
+  var prompt = "% <"+config.host.name+":"+config.host.port+"> "
+  process.stdout.write(prompt)
+  process.stdin.on('data', function(data){
+    try {
+      var params = (data.trim()+"").split(' ')
+      var command = params[0]
+      params.splice(0,1)
+      commands[command].apply(null,params)
+    } catch (e) {
+      if (e.toString() == 'Error: Forced error') throw e;
+      console.log('Sorry, that is not a valid command. Use [cmd] to print all available commands.')
     }
-    input.prompt()
+    process.stdout.write(prompt)
   })
 })
