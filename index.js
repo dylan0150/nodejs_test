@@ -4,8 +4,6 @@ var express         = require('express')
 var bodyParser      = require('body-parser')
 var config          = require('./server/config')
 var secure          = require('./secure')
-var rls             = require('readline-sync')
-var readline        = require('readline')
 
 var arr = process.argv[1].split('/')
 var path = ""
