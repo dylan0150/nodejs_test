@@ -5,8 +5,7 @@ exports.get = function(request, response) {
   try {
     var ok = auth.accept(request,response).ok
   } catch (e) {
-    config.error(e)
-    response.status(200).send({ok:false}).end()
+    config.error(404,e,request,response)
   }
   if (!ok) {
     response.status(200).send({ok:false}).end()
@@ -26,7 +25,7 @@ exports.post = function(request, response) {
   try {
     var ok = auth.accept(request,response).ok
   } catch (e) {
-    config.error(new Error(e),request,response)
+    config.error(404,e,request,response)
   }
   if (!ok) {
     response.status(403).send({ok:false}).end()

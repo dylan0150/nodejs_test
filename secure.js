@@ -19,7 +19,7 @@ exports.setUp = function() {
     json.aes256 = rls.question('Please enter an aes256 encryption key\n> ', { hideEchoBack: true })
     change = true
   } else { console.log('aes256 key found') }
-  aesKey = json.aes256
+  exports.key = aesKey = json.aes256
   if (typeof json.email_username == 'undefined') {
     var res = rls.question('Please enter your email username\n> ', { hideEchoBack: false })
     change = true

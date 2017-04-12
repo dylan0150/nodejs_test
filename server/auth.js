@@ -9,7 +9,7 @@ var config  = require('./config')
 try {
   var aes_key = secure.key
 } catch (e) {
-  console.log('Error: no aes256 key found, please run "node secure.js [aes256] [value]"')
+  console.log('Error: no aes256 key found')
   throw e;
 }
 
