@@ -5,6 +5,7 @@ var fs      = require('fs')
 
 var secure  = require('./../secure')
 var config  = require('./config')
+var mailer  = require('./mailer')
 
 try {
   var aes_key = secure.key
@@ -76,7 +77,33 @@ exports.register = function(data) {
   var id = user.id
   json.users.push(user)
   fs.writeFileSync(config.path.index+'server/user.json',JSON.stringify(json))
+  var username  = user.username
+  var link      = config.host.sitename + '/register?id=' + exports.encrypt(user.id)
+  var site_name = config.host.sitename
+  mailer.send('register', data.email, {username, link, site_name})
   return { ok:true, cookie:cookie, id:id }
+}
+
+exports.validate = function(request) {
+  var id = exports.decrypt( request.url.split('/register?id=')[1] )
+  var json = JSON.parse(fs.readFileSync(config.path.index+'server/user.json'))
+  var valid = false
+  for (var i = 0; i < json.users.length; i++) {
+    if (json.users[i].id == id) {
+      valid = true
+      console.log('Validation for user '+id)
+      if (json.users[i].validated == false) {
+        mailer.send('validate-success', json.users[i].data.email, {username: json.users[i].username})
+      }
+      json.users[i].validated = true
+    }
+  }
+  if (valid) {
+    fs.writeFileSync(config.path.index+'server/user.json',JSON.stringify(json))
+    return { ok:true }
+  } else {
+    return { ok:false, err:4038, errmsg:'Id invalid'}
+  }
 }
 
 exports.parseCookie = function(cookie) {
@@ -145,5 +172,6 @@ var User = function(data) {
 
 var validateEmail = function(email) {
   console.log('Email validation for ' + email)
-  return false;
+  var regex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+  return regex.test(email)
 }

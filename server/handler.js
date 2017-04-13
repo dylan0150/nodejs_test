@@ -59,6 +59,19 @@ exports.register = function(request, response) {
   }
 }
 
+exports.validate = function(request, response) {
+  try {
+    var data = auth.validate(request)
+    if (data.ok) {
+      response.redirect('/');
+    } else {
+      response.status(403).send('Invalid Link').end()
+    }
+  } catch (e) {
+    config.error(403,e,request,response)
+  }
+}
+
 exports.auth = function(request, response) {
   try {
     var ok = auth.accept(request,response).ok

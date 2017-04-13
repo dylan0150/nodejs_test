@@ -71,14 +71,13 @@ exports.send = function(type, to, params) {
     }
   }
 
-  console.log(options)
-  if (false) { //TODO: if(valid) - When ready for live emailing.
+  if (valid) { //TODO: if(valid) - When ready for live emailing.
     transporter.sendMail(options, function(error, info, response) {
       if (error) console.log(error);
-      console.log(info)
-      console.log(response)
+      console.info(info)
+      console.info(response)
+      transporter.close()
     })
-    transporter.close()
   } else {
     console.log('ERROR: Invalid Email Type')
     return { ok:false, err:3001, errmsg:'Invalid Email Type' }

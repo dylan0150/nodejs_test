@@ -51,7 +51,9 @@ exapp.get('/login*', function(request,response){
 exapp.post('/register*', function(request,response){
   request_handler.register(request,response)
 })
-
+exapp.get('/register*', function(request,response){
+  request_handler.validate(request,response)
+})
 exapp.get('/api*', function(request,response){
   request_handler.get(request,response)
 })
@@ -86,7 +88,7 @@ var newLog = function(){
   str += '|| date: '+new Date(Date.now()).toString()+" "
   str += '|| host: '+config.host.name+':'+config.host.port
   str += ' >>>\n\n'
-  fs.writeFileSync(config.path.index+'server/log/__log.txt',str)
+  fs.writeFileSync(config.path.index+'log/__log.txt',str)
 }
 var saveLog = function(){
   var log = fs.readFileSync(config.path.index+'server/log/__log.txt','UTF-8')
@@ -94,7 +96,7 @@ var saveLog = function(){
   var year = now.getFullYear()
   var month = now.getMonth() + 1
   var day = now.getDate()
-  var path = config.path.index+'server/log/logfile_'+day+month+year+'_'+now+'.txt'
+  var path = config.path.index+'log/logfile_'+day+month+year+'_'+now+'.txt'
   fs.writeFileSync(path.replace(/ /g,''),log)
 }
 console.log = function(data) {
@@ -107,7 +109,7 @@ console.log = function(data) {
   else if (mseconds < 100) { mseconds = "0"+mseconds }
   time += seconds+"::"+mseconds+" "
   var entry = time+data.toString()+"\n"
-  fs.appendFileSync(config.path.index+'server/log/__log.txt',entry)
+  fs.appendFileSync(config.path.index+'log/__log.txt',entry)
 }
 console.error = function(data) {
   var now = new Date(Date.now())
@@ -119,16 +121,16 @@ console.error = function(data) {
   else if (mseconds < 100) { mseconds = "0"+mseconds }
   time += seconds+"::"+mseconds+" "
   var entry = time+data.toString()+"\n"
-  fs.appendFileSync(config.path.index+'server/log/__err.txt',entry)
+  fs.appendFileSync(config.path.index+'log/__err.txt',entry)
 }
 
 try {
-  var log = fs.readFileSync(config.path.index+'server/log/__log.txt','UTF-8')
+  var log = fs.readFileSync(config.path.index+'log/__log.txt','UTF-8')
   var str = '\n<<< BEGIN LOG '
   str += '|| date: '+new Date(Date.now()).toString()+" "
   str += '|| host: '+config.host.name+':'+config.host.port
   str += ' >>>\n\n'
-  fs.appendFileSync(config.path.index+'server/log/__log.txt',str)
+  fs.appendFileSync(config.path.index+'log/__log.txt',str)
 } catch (e) {
   console.info('No log found: starting new logfile')
   newLog()

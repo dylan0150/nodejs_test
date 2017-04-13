@@ -1,6 +1,7 @@
 exports.host = {
   port:8080,
-  name:"localhost"
+  name:"localhost",
+  sitename:"localhost:8080"
 }
 
 exports.api = {
