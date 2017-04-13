@@ -74,8 +74,7 @@ exports.send = function(type, to, params) {
   if (valid) { //TODO: if(valid) - When ready for live emailing.
     transporter.sendMail(options, function(error, info, response) {
       if (error) console.log(error);
-      console.info(info)
-      console.info(response)
+      console.log(response.envelope)
       transporter.close()
     })
   } else {
