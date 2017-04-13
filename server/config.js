@@ -27,7 +27,7 @@ exports.path = {
 
 exports.error = function(code, error, request, response) {
   console.log('Error:'+code)
-  console.log(new Error(error).stack)
+  console.error(new Error(error).stack)
   switch (code) {
     default: response.status(code).send({ok:false}).end()
   }

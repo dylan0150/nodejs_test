@@ -70,7 +70,7 @@ exports.register = function(data) {
     }
     if (json.users[i].username == data.username) return { ok:false, err:4031, errmsg:'Duplicate Username' };
   }
-  if (!validateEmail(data.email)) return {ok: false, err:4035, errmsg:'Invalid Email'};
+  if (!validateEmail(data.email)) return { ok: false, err:4035, errmsg:'Invalid Email' };
   var user = new User(data)
   var cookie = user.cookie
   var id = user.id
